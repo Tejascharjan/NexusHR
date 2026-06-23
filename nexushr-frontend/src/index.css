@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  /* Backgrounds */
+  --color-primary-bg: #020617;
+  --color-sidebar-bg: #030b18;
+  --color-card-bg: #0f172a;
+  --color-input-bg: #111827;
+
+  /* Borders */
+  --color-border-primary: #1e293b;
+  --color-border-secondary: #334155;
+
+  /* Text */
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+
+  /* Accent */
+  --color-accent: #f97316;
+  --color-accent-hover: #ea580c;
+  --color-accent-light: rgb(249 115 22 / 0.1);
+  --color-accent-text: #fb923c;
+
+  /* Table */
+  --color-row-hover: rgb(30 41 59 / 0.2);
+
+  /* Success */
+  --color-success-bg: rgb(34 197 94 / 0.1);
+  --color-success-text: #4ade80;
+
+  /* Danger */
+  --color-danger-bg: rgb(239 68 68 / 0.1);
+  --color-danger-text: #f87171;
+}
+
+[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+[type="month"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}

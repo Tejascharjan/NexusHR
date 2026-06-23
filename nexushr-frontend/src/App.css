@@ -1,0 +1,15 @@
+.app-shell {
+  min-height: 100vh;
+  background: var(--navy);
+  color: var(--white);
+}
+
+body {
+  min-height: 100vh;
+  background: var(--navy);
+}
+
+button,
+input {
+  font: inherit;
+}
