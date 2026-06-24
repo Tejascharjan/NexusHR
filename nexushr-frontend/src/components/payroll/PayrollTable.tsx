@@ -33,10 +33,12 @@ const PayrollTable = () => {
 
   return (
     <div className="bg-card-bg border border-slate-800 rounded-2xl overflow-hiddens">
-      <button onClick={handleRtgsDownload} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-green-600 hover:bg-green-700 text-white">
-        <Download size={18} />
-        Download RTGS
-      </button>
+      <div className="p-4 flex items-center justify-between">
+        <h2 className="text-xl font-semibold text-white">Payroll Table</h2>
+        <button onClick={handleRtgsDownload} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-green-600 hover:bg-green-700 text-white">
+          <Download size={18} />
+        </button>
+      </div>
 
       <div className="overflow-x-auto">
         <table className="w-full">

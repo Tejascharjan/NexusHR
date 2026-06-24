@@ -6,6 +6,7 @@ import { useAppDispatch } from "./state/store";
 import { fetchUserProfile } from "./state/authSlice";
 import { useEffect } from "react";
 import Homepage from "./pages/Homepage";
+import EmployeeRouters from "./routers/EmployeeRouters";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -44,7 +45,7 @@ function App() {
           path="/employee/*"
           element={
             <ProtectedRoutes allowedRoles={["EMPLOYEE"]}>
-              <div>Employee Routes</div>
+              <EmployeeRouters />
             </ProtectedRoutes>
           }
         />

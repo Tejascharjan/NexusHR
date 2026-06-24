@@ -1,8 +1,10 @@
 package com.nexushr.service.impl;
 
 import com.nexushr.dto.request.AttendanceRequest;
+import com.nexushr.dto.request.MonthlyAttendanceFilterRequest;
 import com.nexushr.dto.response.AttendanceResponse;
 import com.nexushr.dto.response.EmployeeDetailsResponse;
+import com.nexushr.dto.response.MonthlyAttendanceResponse;
 import com.nexushr.entity.Attendance;
 import com.nexushr.entity.Attendancestatus;
 import com.nexushr.entity.Employee;
@@ -10,6 +12,10 @@ import com.nexushr.repository.AttendanceRepository;
 import com.nexushr.repository.EmployeeRepository;
 import com.nexushr.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -49,28 +55,6 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     @Override
-    public Attendance getAttendanceById(Long id) {
-        return attendanceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Attendance not found with id : " + id));
-    }
-
-    @Override
-    public Attendance getAttendanceByEmployeeAndDate(Long employeeId, LocalDate date) {
-        return attendanceRepository.findByEmployeeIdAndDate(employeeId, date)
-                .orElseThrow(() -> new RuntimeException("Attendance not found employee : " + employeeId + " on " + date));
-    }
-
-    @Override
-    public List<Attendance> getAttendanceByEmployee(Long employeeId) {
-        return attendanceRepository.findByEmployeeId(employeeId);
-    }
-
-    @Override
-    public List<Attendance> getAttendanceByEmployeeAndDateRange(Long employeeId, LocalDate from, LocalDate to) {
-        return attendanceRepository.findByEmployeeIdAndDateBetween(employeeId, from, to);
-    }
-
-    @Override
     public List<AttendanceResponse> getAttendanceByDate(LocalDate date) {
 
         return attendanceRepository.findByDate(date).stream()
@@ -79,64 +63,11 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     @Override
-    public List<Attendance> getAttendanceByDepartmentAndDate(Long departmentId, LocalDate date) {
-        return attendanceRepository.findByDepartmentAndDate(departmentId, date);
-    }
-
-    @Override
-    public Attendance checkIn(Long employeeId) {
-        Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new RuntimeException("Employee not found"));
-        attendanceRepository.findByEmployeeIdAndDate(employeeId, LocalDate.now()).ifPresent(a -> {
-            throw new RuntimeException("Attendance checked in today.");
-        });
-        Attendance attendance = new Attendance();
-        attendance.setEmployee(employee);
-        attendance.setDate(LocalDate.now());
-        attendance.setCheckIn(LocalTime.now());
-        attendance.setStatus(Attendancestatus.PRESENT);
-        attendance.setBiometricVerified(true);
-        return attendanceRepository.save(attendance);
-    }
-
-    @Override
-    public Attendance checkOut(Long employeeId) {
-        Attendance attendance = getAttendanceByEmployeeAndDate(employeeId, LocalDate.now());
-        attendance.setCheckOut(LocalTime.now());
-        if (attendance.getCheckIn() != null) {
-            double hours = ChronoUnit.MINUTES.between(attendance.getCheckIn(), attendance.getCheckOut()) / 60.0;
-            attendance.setWorkedHours(hours);
-            if (hours < 4.0) attendance.setStatus(Attendancestatus.HALF_DAY);
-        }
-        return attendanceRepository.save(attendance);
-    }
-
-    @Override
-    public long countPresentDays(Long employeeId, LocalDate from, LocalDate to) {
-        return attendanceRepository.countPresentDays(employeeId, from, to);
-    }
-
-    @Override
-    public List<Attendance> getUnverifiedBiometricByDate(LocalDate date) {
-        return attendanceRepository.findUnverifiedBiometricByDate(date);
-    }
-
-    @Override
-    public Attendance updateAttendance(Long id, Attendance attendance) {
-        Attendance existing = getAttendanceById(id);
-        existing.setStatus(attendance.getStatus());
-        existing.setCheckIn(attendance.getCheckIn());
-        existing.setCheckOut(attendance.getCheckOut());
-        existing.setWorkedHours(attendance.getWorkedHours());
-        existing.setBiometricVerified(attendance.getBiometricVerified());
-        return attendanceRepository.save(existing);
-    }
-
-    @Override
-    public void deleteAttendance(Long id) {
-        if (!attendanceRepository.existsById(id)) {
-            throw new RuntimeException("Attendance not found with id : " + id);
-        }
-        attendanceRepository.deleteById(id);
+    public Page<MonthlyAttendanceResponse> getMonthlyAttendance(MonthlyAttendanceFilterRequest request) {
+        Integer month = request.getMonth() != null ? request.getMonth() : LocalDate.now().getMonthValue();
+        Integer year = request.getYear() != null ? request.getYear() : LocalDate.now().getYear();
+        Pageable pageable = PageRequest.of(request.getPage(), request.getPageSize(), Sort.by("employee.id"));
+        return attendanceRepository.getMonthlyAttendance(month, year, request.getDepartmentId(), pageable);
     }
 
     private AttendanceResponse mapToAttendanceResponse(Attendance attendance) {

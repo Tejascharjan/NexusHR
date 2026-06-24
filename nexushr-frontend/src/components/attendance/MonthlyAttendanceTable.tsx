@@ -1,48 +1,59 @@
-const data = [
-     {
-          id: 1,
-          employee: "Jagan Pushpa",
-          present: 22,
-          absent: 1,
-          late: 2,
-          halfDay: 1,
-     },
-];
-const MonthlyAttendanceTable = () => {
-     return (
-          <div className="bg-card-bg border border-border-primary rounded-2xl overflow-hidden">
-               <div className="px-6 py-4 border-b border-border-primary">
-                    <h2 className="font-semibold">Monthly Summary</h2>
-               </div>
+import type { MonthlyAttendance } from "@/state/monthlyAttendanceSlice";
 
-               <table className="w-full">
-                    <thead>
-                         <tr className="bg-bg-primary text-text-secondary">
-                              <th className="p-4 text-left">Employee</th>
-                              <th className="p-4 text-left">Present</th>
-                              <th className="p-4 text-left">Absent</th>
-                              <th className="p-4 text-left">Late</th>
-                              <th className="p-4 text-left">Half Day</th>
-                         </tr>
-                    </thead>
+interface Props {
+  attendance: MonthlyAttendance[];
+}
 
-                    <tbody>
-                         {data.map((item) => (
-                              <tr
-                                   key={item.id}
-                                   className="border-t border-border-primary"
-                              >
-                                   <td className="p-4">{item.employee}</td>
-                                   <td className="p-4 text-green-400">{item.present}</td>
-                                   <td className="p-4 text-red-400">{item.absent}</td>
-                                   <td className="p-4 text-yellow-400">{item.late}</td>
-                                   <td className="p-4 text-orange-400">{item.halfDay}</td>
-                              </tr>
-                         ))}
-                    </tbody>
-               </table>
-          </div>
-     );
+const MonthlyAttendanceTable = ({ attendance }: Props) => {
+  return (
+    <div className="bg-card-bg border border-slate-800 rounded-2xl overflow-hidden ">
+      <table className="w-full">
+        <thead>
+          <tr className="border-b border-slate-800">
+            <th className="px-6 py-4 text-left text-slate-400">Employee</th>
+
+            <th className="px-6 py-4 text-left text-slate-400">Department</th>
+
+            <th className="px-6 py-4 text-center text-slate-400">Present</th>
+
+            <th className="px-6 py-4 text-center text-slate-400">Absent</th>
+
+            <th className="px-6 py-4 text-center text-slate-400">Leave</th>
+
+            <th className="px-6 py-4 text-center text-slate-400">Working Days</th>
+
+            <th className="px-6 py-4 text-center text-slate-400">Attendance %</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {attendance.map((item) => (
+            <tr
+              key={item.employeeId}
+              className="
+                border-b
+                border-slate-800
+                hover:bg-slate-800/40
+              ">
+              <td className="px-6 py-4 text-white">{item.employeeName}</td>
+
+              <td className="px-6 py-4 text-slate-300">{item.departmentName}</td>
+
+              <td className="px-6 py-4 text-center text-green-400">{item.presentDays}</td>
+
+              <td className="px-6 py-4 text-center text-red-400">{item.absentDays}</td>
+
+              <td className="px-6 py-4 text-center text-yellow-400">{item.leaveDays}</td>
+
+              <td className="px-6 py-4 text-center text-white">{item.totalWorkingDays}</td>
+
+              <td className="px-6 py-4 text-center text-orange-400 font-medium">{item.attendancePercentage.toFixed(2)}%</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 };
 
 export default MonthlyAttendanceTable;

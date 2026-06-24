@@ -5,6 +5,7 @@ import employeeSlice from "./employeeSlice";
 import departmentSlice from "./departmentSlice";
 import payrollSlice from "./payrollSlice";
 import attendanceSlice from "./attendanceSlice";
+import monthlyAttendanceSlice from "./monthlyAttendanceSlice";
 
 import {
   useDispatch,
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   department: departmentSlice,
   payroll: payrollSlice,
   attendance: attendanceSlice,
+  monthlyAttendance: monthlyAttendanceSlice
 });
 
 const store = configureStore({

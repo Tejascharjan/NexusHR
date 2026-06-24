@@ -43,7 +43,6 @@ export const logout = createAsyncThunk<any, any>(
       localStorage.clear();
       navigate("/");
     } catch (error: any) {
-      console.log("error:-", error);
       return rejectWithValue(error.response?.data || "Logout failed");
     }
   },
