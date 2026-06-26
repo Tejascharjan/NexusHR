@@ -1,6 +1,6 @@
 import DepartmentDrawer from "@/components/department/DepartmentDrawer";
 import DepartmentTable from "@/components/department/DepartmentTable";
-import type { Department } from "@/state/departmentSlice";
+import type { Department } from "@/types/DepartmentTypes";
 import { useState } from "react";
 
 const DepartmentPage = () => {
@@ -15,23 +15,25 @@ const DepartmentPage = () => {
         <div>
           <h1 className="text-2xl font-semibold">Department Management</h1>
 
-          <p className="text-slate-400 text-sm">
-            Manage departments and their details
-          </p>
+          <p className="text-slate-400 text-sm">Manage departments and their details</p>
         </div>
 
-        <button onClick={() => {
-          setSelectedDepartment(null);
-          setOpenDrawer(true);
-        }} className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 rounded-xl font-medium">
+        <button
+          onClick={() => {
+            setSelectedDepartment(null);
+            setOpenDrawer(true);
+          }}
+          className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 rounded-xl font-medium">
           Add Department
         </button>
       </div>
 
-      <DepartmentTable onEdit={(department) => {
-        setSelectedDepartment(department);
-        setOpenDrawer(true);
-      }} />
+      <DepartmentTable
+        onEdit={(department) => {
+          setSelectedDepartment(department);
+          setOpenDrawer(true);
+        }}
+      />
 
       <DepartmentDrawer
         open={openDrawer}
@@ -41,7 +43,7 @@ const DepartmentPage = () => {
           setSelectedDepartment(null);
         }}
       />
-    </div >
+    </div>
   );
 };
 

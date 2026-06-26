@@ -1,6 +1,6 @@
-import type { Department } from "@/state/departmentSlice";
 import SelectField from "../common/SelectField";
 import InputField from "../common/InputField";
+import type { Department } from "@/types/DepartmentTypes";
 
 interface Props {
   filters: {

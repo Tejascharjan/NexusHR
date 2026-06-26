@@ -70,6 +70,13 @@ public class AttendanceServiceImpl implements AttendanceService {
         return attendanceRepository.getMonthlyAttendance(month, year, request.getDepartmentId(), pageable);
     }
 
+    @Override
+    public Page<AttendanceResponse> getFilteredAttendance(AttendanceRequest request) {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("date").descending());
+        Page<Attendance> attendances = attendanceRepository.filterAttendance(request.getDate(), request.getDepartmentId(), request.getEmployeeId(), request.getStatus(), pageable);
+        return attendances.map(this::mapToAttendanceResponse);
+    }
+
     private AttendanceResponse mapToAttendanceResponse(Attendance attendance) {
         Employee employee = attendance.getEmployee();
         EmployeeDetailsResponse response = new EmployeeDetailsResponse();

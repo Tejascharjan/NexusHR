@@ -1,5 +1,6 @@
 package com.nexushr.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,6 +35,7 @@ public class User implements UserDetails {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id")
+    @JsonIgnore
     private Employee employee;
 
     @Override

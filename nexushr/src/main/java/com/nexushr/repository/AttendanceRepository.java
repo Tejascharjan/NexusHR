@@ -41,4 +41,17 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
                                                          @Param("year") Integer year,
                                                          @Param("departmentId") Long departmentId,
                                                          Pageable pageable);
+
+    @Query("""
+            SELECT a FROM Attendance a
+            WHERE (cast(:date as date) IS NULL OR a.date = :date)
+            AND (cast(:departmentId as long) IS NULL OR a.employee.department.id = :departmentId)
+            AND (cast(:employeeId as long) IS NULL OR a.employee.id = :employeeId)
+            AND (cast(:status as string) IS NULL OR a.status = :status)
+            """)
+    Page<Attendance> filterAttendance(@Param("date") LocalDate date,
+                                      @Param("departmentId") Long departmentId,
+                                      @Param("employeeId") Long employeeId,
+                                      @Param("status") Attendancestatus status,
+                                      Pageable pageable);
 }

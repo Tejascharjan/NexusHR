@@ -1,4 +1,4 @@
-package com.nexushr.controller;
+    package com.nexushr.controller;
 
 import com.nexushr.dto.request.DepartmentRequest;
 import com.nexushr.dto.response.DepartmentResponse;

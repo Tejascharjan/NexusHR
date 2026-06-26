@@ -9,7 +9,7 @@ const DashboardPage = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (user?.role) {
+    if (user?.role == "ADMIN") {
       dispatch(fetchGlobalAdminMetrics());
     }
   }, [user]);

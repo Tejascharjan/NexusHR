@@ -1,4 +1,5 @@
 import { api } from "@/config/Api";
+import type { Employee, EmployeeDetails } from "@/types/EmployeeTypes";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 export const createEmployee = createAsyncThunk(
@@ -29,28 +30,33 @@ export const getAllEmployees = createAsyncThunk(
   },
 );
 
-export interface Employee {
-  id: number;
-  departmentId: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  departmentName: string;
-  role: string;
-  status: string;
-  offboardingDate: string | null;
-  joiningDate: string | null;
-  phone: string | null;
-}
+export const getEmployeeDetails = createAsyncThunk(
+  "employee/getEmployeeDetails",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/auth/employee/profile`);
+      console.log("response", response);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data || "Failed to fetch employee details",
+      );
+    }
+  },
+);
+
+
 
 interface EmployeeState {
   employees: Employee[];
+  employeeDetails: EmployeeDetails | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: EmployeeState = {
   employees: [],
+  employeeDetails: null,
   loading: false,
   error: null,
 };
@@ -72,7 +78,19 @@ const employeeSlice = createSlice({
       .addCase(getAllEmployees.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-      });
+      })
+      .addCase(getEmployeeDetails.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getEmployeeDetails.fulfilled, (state, action) => {
+        state.employeeDetails = action.payload;
+        state.loading = false;
+      })
+      .addCase(getEmployeeDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
   },
 });
 

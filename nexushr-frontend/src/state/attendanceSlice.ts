@@ -1,4 +1,5 @@
 import { api } from "@/config/Api";
+import type { Attendance } from "@/types/AttendanceTypes";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 export const createAttendance = createAsyncThunk(
@@ -15,36 +16,19 @@ export const createAttendance = createAsyncThunk(
   },
 );
 
-export const getAttendanceByDate = createAsyncThunk(
-  "attendance/getAttendanceByDate",
-  async (date: string, { rejectWithValue }) => {
-    try {
-      const response = await api.get(`/admin/attendance/date?date=${date}`);
-
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to fetch attendance",
-      );
-    }
-  },
-);
+export const filterAttendance = createAsyncThunk("/filter/attendance", async (filterData: any, { rejectWithValue }) => {
+  try {
+    const response = await api.post("/filter/attendance", filterData);
+    console.log("attendance ", response);
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.message || "Failed to fetch attendance",
+    );
+  }
+});
 
 
-interface Attendance {
-  id: number;
-  employee: {
-    id: number;
-    firstName: string;
-    lastName: string;
-  };
-  date: string;
-  checkIn: string;
-  checkOut: string;
-  status: string;
-  biometricVerified: boolean;
-  workedHours: number;
-}
 
 interface AttendanceState {
   attendance: Attendance | null;
@@ -80,14 +64,15 @@ const attendanceSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-      .addCase(getAttendanceByDate.pending, (state) => {
+      .addCase(filterAttendance.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getAttendanceByDate.fulfilled, (state, action) => {
-        state.attendances = action.payload;
+      .addCase(filterAttendance.fulfilled, (state, action) => {
+        state.loading = false;
+        state.attendances = action.payload.content;
       })
-      .addCase(getAttendanceByDate.rejected, (state, action) => {
+      .addCase(filterAttendance.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })

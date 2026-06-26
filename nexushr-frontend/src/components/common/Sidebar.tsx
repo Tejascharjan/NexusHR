@@ -1,9 +1,9 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/state/store";
-import { NAVIGATION_CONFIG, type Role } from "@/types/navigation";
 import { LogOut } from "lucide-react";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { logout } from "@/state/authSlice";
+import { NAVIGATION_CONFIG, type Role } from "@/utils/navigation";
 
 const Sidebar = () => {
   const { user } = useAppSelector((store) => store.auth);
@@ -77,7 +77,7 @@ const Sidebar = () => {
 
       {/* User Footer */}
       <div className="p-3 border-t border-slate-800/60">
-        <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-3 flex items-center gap-3">
+        <div className="bg-card-bg border border-slate-800 rounded-xl p-3 flex items-center gap-3">
           <Avatar className="w-9 h-9 border border-orange-500/30 bg-orange-500/10">
             <AvatarFallback className="text-orange-400 font-semibold text-xs">{getUserInitials(user?.name || "User")}</AvatarFallback>
           </Avatar>

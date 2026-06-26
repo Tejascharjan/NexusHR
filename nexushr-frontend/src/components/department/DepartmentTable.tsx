@@ -1,7 +1,9 @@
 import { useAppDispatch, useAppSelector } from "@/state/store";
 import { Pencil, Trash2 } from "lucide-react";
 import { useEffect } from "react";
-import { getAllDepartments, type Department } from "@/state/departmentSlice.ts";
+import { deleteDepartment, getAllDepartments } from "@/state/departmentSlice.ts";
+import { toast } from "react-toastify";
+import type { Department } from "@/types/DepartmentTypes";
 
 const DepartmentTable = ({ onEdit }: { onEdit: (department: Department) => void }) => {
   const dispatch = useAppDispatch();
@@ -10,6 +12,16 @@ const DepartmentTable = ({ onEdit }: { onEdit: (department: Department) => void 
   useEffect(() => {
     dispatch(getAllDepartments());
   }, [dispatch]);
+
+  const handleDelete = async (id: number) => {
+    if (confirm("Are you sure you want to delete this department?")) {
+      try {
+        await dispatch(deleteDepartment(id)).unwrap();
+      } catch (error: any) {
+        toast.error(error || "Failed to delete department");
+      }
+    }
+  };
 
   return (
     <div className="bg-card-bg border border-slate-800 rounded-2xl overflow-hidden">
@@ -33,9 +45,7 @@ const DepartmentTable = ({ onEdit }: { onEdit: (department: Department) => void 
 
           <tbody>
             {department.departments.map((department) => (
-              <tr
-                key={department.id}
-                className="border-t border-slate-800 hover:bg-slate-800/20">
+              <tr key={department.id} className="border-t border-slate-800 hover:bg-slate-800/20">
                 <td className="p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-400 font-semibold">
@@ -45,9 +55,7 @@ const DepartmentTable = ({ onEdit }: { onEdit: (department: Department) => void 
                     <div>
                       <p className="font-medium">{department.name}</p>
 
-                      <p className="text-xs text-slate-500">
-                        DEPT00{department.id}
-                      </p>
+                      <p className="text-xs text-slate-500">DEPT00{department.id}</p>
                     </div>
                   </div>
                 </td>
@@ -55,9 +63,7 @@ const DepartmentTable = ({ onEdit }: { onEdit: (department: Department) => void 
                 <td className="p-4">{department.description}</td>
 
                 <td className="p-4">
-                  <span className="px-3 py-1 rounded-full text-xs bg-green-500/10 text-green-400">
-                    {department.isActive ? "Active" : "Inactive"}
-                  </span>
+                  <span className="px-3 py-1 rounded-full text-xs bg-green-500/10 text-green-400">{department.isActive ? "Active" : "Inactive"}</span>
                 </td>
 
                 <td className="p-4">
@@ -66,7 +72,7 @@ const DepartmentTable = ({ onEdit }: { onEdit: (department: Department) => void 
                       <Pencil size={16} />
                     </button>
 
-                    <button className="p-2 rounded-lg hover:bg-red-500/10 text-red-400">
+                    <button onClick={() => handleDelete(department.id)} className="p-2 rounded-lg hover:bg-red-500/10 text-red-400">
                       <Trash2 size={16} />
                     </button>
                   </div>

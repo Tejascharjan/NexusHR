@@ -1,4 +1,5 @@
 import { api } from "@/config/Api";
+import type { AttendanceFilters, AttendanceState } from "@/types/AttendanceTypes";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 
@@ -17,37 +18,6 @@ export const getMonthlyAttendance = createAsyncThunk(
 );
 
 
-export interface MonthlyAttendance {
-     employeeId: number;
-     employeeName: string;
-     departmentName: string;
-
-     presentDays: number;
-     absentDays: number;
-     leaveDays: number;
-
-     totalWorkingDays: number;
-
-     attendancePercentage: number;
-}
-
-export interface AttendanceFilters {
-     month?: number;
-     year?: number;
-     departmentId?: number;
-
-     page?: number;
-     size?: number;
-}
-
-export interface AttendanceState {
-     attendance: MonthlyAttendance[];
-     loading: boolean;
-     totalPages: number;
-     totalElements: number;
-     page: number;
-     error: string | null;
-}
 
 
 const initialState: AttendanceState = {

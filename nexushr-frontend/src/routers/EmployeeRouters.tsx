@@ -1,6 +1,8 @@
-import DashboardLayout from "@/layouts/DashboardLayout";
-import EmployeePage from "@/pages/admin/EmployeePage";
-
+import DashboardLayout from "@/components/common/DashboardLayout";
+import AttendancePage from "@/pages/AttendancePage";
+import DashboardPage from "@/pages/DashboardPage";
+import MyLeavePage from "@/pages/MyLeavePage";
+import MyProfile from "@/pages/MyProfile";
 import { Route, Routes } from "react-router-dom";
 
 const EmployeeRouters = () => {
@@ -8,7 +10,10 @@ const EmployeeRouters = () => {
     <div>
       <Routes>
         <Route element={<DashboardLayout />}>
-          <Route path="dashboard" element={<EmployeePage />} />
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="profile" element={<MyProfile />} />
+          <Route path="attendance" element={<AttendancePage />} />
+          <Route path="leaves" element={<MyLeavePage />} />
         </Route>
       </Routes>
     </div>

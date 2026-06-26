@@ -3,6 +3,7 @@ package com.nexushr.controller;
 import com.nexushr.dto.response.AuthResponse;
 import com.nexushr.dto.request.LoginRequest;
 import com.nexushr.dto.request.SignupRequest;
+import com.nexushr.dto.response.EmployeeProfileResponse;
 import com.nexushr.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,11 @@ public class AuthController {
     @GetMapping("/profile")
     public ResponseEntity<AuthResponse> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(authService.getCurrentUser(userDetails));
+    }
+
+    @GetMapping("/employee/profile")
+    public ResponseEntity<EmployeeProfileResponse> getEmployeeProfile(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(authService.getEmployeeProfile(userDetails));
     }
 
 }

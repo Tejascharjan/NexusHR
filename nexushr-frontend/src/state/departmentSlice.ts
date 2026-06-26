@@ -1,4 +1,5 @@
 import { api } from "@/config/Api";
+import type { Department } from "@/types/DepartmentTypes";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 export const getAllDepartments = createAsyncThunk(
@@ -44,14 +45,21 @@ export const updateDepartment = createAsyncThunk(
     }
   });
 
-export interface Department {
-  id: number;
-  managerId: number;
-  name: string;
-  description: string;
-  managerName: string;
-  isActive: boolean;
-}
+export const deleteDepartment = createAsyncThunk(
+  "department/deleteDepartment",
+  async (id: number, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await api.delete(`/admin/departments/${id}`);
+      dispatch(getAllDepartments());
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to delete department",
+      )
+    }
+  }
+);
+
 
 interface DepartmentState {
   department: Department | null;
@@ -110,7 +118,19 @@ export const departmentSlice = createSlice({
       .addCase(updateDepartment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-      });
+      })
+      .addCase(deleteDepartment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteDepartment.fulfilled, (state, action) => {
+        state.loading = false;
+        state.departments = state.departments.filter((department) => department.id !== action.payload.id);
+      })
+      .addCase(deleteDepartment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
   },
 });
 

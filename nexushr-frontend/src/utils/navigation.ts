@@ -3,12 +3,15 @@ import {
   Users,
   Building2,
   IndianRupee,
-  Briefcase,
   CalendarCheck,
   CalendarDays,
   ClipboardList,
   BarChart3,
   Star,
+  User,
+  LayoutDashboard,
+  Clock3,
+  Receipt,
 } from "lucide-react";
 
 export interface NavigationItem {
@@ -89,18 +92,28 @@ export const NAVIGATION_CONFIG: Record<Role, NavigationItem[]> = {
   EMPLOYEE: [
     {
       title: "Dashboard",
-      icon: Home,
+      icon: LayoutDashboard,
       path: "/employee/dashboard",
     },
     {
-      title: "My Tasks",
-      icon: Briefcase,
-      path: "/employee/tasks",
+      title: "My Profile",
+      icon: User,
+      path: "/employee/profile"
     },
     {
-      title: "My Leaves",
+      title: "Attendance",
+      icon: Clock3,
+      path: "/employee/attendance"
+    },
+    {
+      title: "Leaves",
       icon: CalendarDays,
       path: "/employee/leaves",
-    }
+    },
+    {
+      title: "Payroll",
+      icon: Receipt,
+      path: "/employee/payroll",
+    },
   ],
 };

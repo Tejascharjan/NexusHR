@@ -63,6 +63,9 @@ public class Employee {
     @JoinColumn(name = "department_id")
     private Department department;
 
+    @OneToOne(mappedBy = "employee")
+    private User user;
+
     @Builder.Default
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
     private List<Attendance> attendanceRecords = new ArrayList<>();

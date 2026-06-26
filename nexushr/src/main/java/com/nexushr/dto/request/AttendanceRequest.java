@@ -11,6 +11,7 @@ import java.time.LocalTime;
 
 public class AttendanceRequest {
     private Long employeeId;
+    private Long departmentId;
     private LocalDate date;
     private LocalTime checkIn;
     private LocalTime checkOut;

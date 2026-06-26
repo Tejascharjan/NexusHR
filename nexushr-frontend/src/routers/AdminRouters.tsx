@@ -1,12 +1,12 @@
+import DashboardLayout from "@/components/common/DashboardLayout";
 import EmployeeForm from "@/components/employee/EmployeeForm";
-import DashboardLayout from "@/layouts/DashboardLayout";
-import AttendancePage from "@/pages/admin/AttendancePage";
-import DashboardPage from "@/pages/admin/DashboardPage";
-import DepartmentPage from "@/pages/admin/DepartmentPage";
-import EmployeePage from "@/pages/admin/EmployeePage";
-import LeavePage from "@/pages/admin/LeavePage";
-import MonthlyAttendancePage from "@/pages/admin/MonthlyAttendancePage";
-import PayrollPage from "@/pages/admin/PayrollPage";
+import AttendancePage from "@/pages/AttendancePage";
+import DashboardPage from "@/pages/DashboardPage";
+import DepartmentPage from "@/pages/DepartmentPage";
+import EmployeePage from "@/pages/EmployeePage";
+import LeavePage from "@/pages/LeavePage";
+import MonthlyAttendancePage from "@/pages/MonthlyAttendancePage";
+import PayrollPage from "@/pages/PayrollPage";
 import { Route, Routes } from "react-router-dom";
 
 const AdminRouters = () => {

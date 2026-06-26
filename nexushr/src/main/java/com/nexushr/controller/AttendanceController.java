@@ -41,6 +41,12 @@ public class AttendanceController {
     /*
      * common -> /attendance/**
      */
+    @PostMapping("/filter/attendance")
+    public ResponseEntity<Page<AttendanceResponse>> getFilteredAttendance(@RequestBody AttendanceRequest request) {
+        return ResponseEntity.ok(attendanceService.getFilteredAttendance(request));
+    }
+
+
     @GetMapping("/monthly/attendace")
     public ResponseEntity<Page<MonthlyAttendanceResponse>> getMonthlyAttendance(@RequestParam(required = false) Integer month,
                                                                                 @RequestParam(required = false) Integer year,

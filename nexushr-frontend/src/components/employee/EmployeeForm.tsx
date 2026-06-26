@@ -12,8 +12,8 @@ import ReviewStep from "./ReviewStep";
 import { useAppDispatch, useAppSelector } from "@/state/store";
 
 import { getAllDepartments } from "@/state/departmentSlice";
-import { employeeProfileSchema, type EmployeeProfileFormData } from "../validation/employeeSchema";
 import { createEmployee } from "@/state/employeeSlice";
+import { employeeProfileSchema, type EmployeeProfileFormData } from "@/validations/employeeSchema";
 
 const EmployeeForm = () => {
   const dispatch = useAppDispatch();

@@ -1,12 +1,12 @@
-import { Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
 import "./App.css";
-import AdminRouters from "./routers/AdminRouters";
-import ProtectedRoutes from "./routers/ProtectedRoutes";
 import { useAppDispatch } from "./state/store";
 import { fetchUserProfile } from "./state/authSlice";
-import { useEffect } from "react";
-import Homepage from "./pages/Homepage";
+import { Route, Routes } from "react-router-dom";
+import ProtectedRoutes from "./routers/ProtectedRoutes";
+import AdminRouters from "./routers/AdminRouters";
 import EmployeeRouters from "./routers/EmployeeRouters";
+import Homepage from "./pages/Homepage";
 
 function App() {
   const dispatch = useAppDispatch();

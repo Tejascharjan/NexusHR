@@ -58,7 +58,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     @Transactional(readOnly = true)
     public List<DepartmentResponse> getAllDepartments() {
-        return departmentRepository.findAll().stream()
+        return departmentRepository.findByIsActiveTrue().stream()
                 .map(this::mapToDepartmentResponse)
                 .toList();
     }
@@ -83,10 +83,10 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public void deleteDepartment(Long id) {
-        if (!departmentRepository.existsById(id)) {
-            throw new RuntimeException("Department not found with id: " + id);
-        }
-        departmentRepository.deleteById(id);
+        Department existing = departmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Department not found with id: " + id));
+        existing.setIsActive(false);
+        departmentRepository.save(existing);
     }
 
     @Override

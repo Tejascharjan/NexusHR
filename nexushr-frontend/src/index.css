@@ -37,9 +37,11 @@
 [type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
 }
+
 [type="time"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
 }
+
 [type="month"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
 }

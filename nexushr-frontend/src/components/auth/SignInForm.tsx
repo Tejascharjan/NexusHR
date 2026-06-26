@@ -3,11 +3,7 @@ import { useAppDispatch } from "@/state/store";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-interface SignInProps {
-  onSwitch: () => void;
-}
-
-export default function SignInForm({ onSwitch }: SignInProps) {
+export default function SignInForm() {
   const dispatch = useAppDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,22 +20,15 @@ export default function SignInForm({ onSwitch }: SignInProps) {
     <form onSubmit={handleSubmit} className="space-y-5" noValidate>
       {/* Header */}
       <div>
-        <h2 className="font-syne text-2xl font-bold text-slate-100 tracking-tight">
-          Welcome back
-        </h2>
-        <p className="text-sm text-slate-500 mt-1">
-          Sign in to your NexusHR workspace
-        </p>
+        <h2 className="font-syne text-2xl font-bold text-slate-100 tracking-tight">Welcome back</h2>
+        <p className="text-sm text-slate-500 mt-1">Sign in to your NexusHR workspace</p>
       </div>
 
       {/* Fields */}
       <div className="space-y-4">
         {/* Email */}
         <div>
-          <label
-            htmlFor="signin-email"
-            className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5"
-          >
+          <label htmlFor="signin-email" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
             Email address <span className="text-orange-500">*</span>
           </label>
           <input
@@ -59,10 +48,7 @@ export default function SignInForm({ onSwitch }: SignInProps) {
 
         {/* Password */}
         <div>
-          <label
-            htmlFor="signin-password"
-            className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5"
-          >
+          <label htmlFor="signin-password" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
             Password <span className="text-orange-500">*</span>
           </label>
           <div className="relative">
@@ -84,16 +70,9 @@ export default function SignInForm({ onSwitch }: SignInProps) {
               onClick={() => setShowPassword((v) => !v)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
               tabIndex={-1}
-              aria-label={showPassword ? "Hide password" : "Show password"}
-            >
+              aria-label={showPassword ? "Hide password" : "Show password"}>
               {showPassword ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -102,19 +81,8 @@ export default function SignInForm({ onSwitch }: SignInProps) {
                   />
                 </svg>
               ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -130,10 +98,7 @@ export default function SignInForm({ onSwitch }: SignInProps) {
 
       {/* Forgot password */}
       <div className="text-right -mt-1">
-        <button
-          type="button"
-          className="text-xs text-orange-500 hover:underline focus:outline-none focus:underline"
-        >
+        <button type="button" className="text-xs text-orange-500 hover:underline focus:outline-none focus:underline">
           Forgot password?
         </button>
       </div>
@@ -147,22 +112,9 @@ export default function SignInForm({ onSwitch }: SignInProps) {
                    text-white font-bold rounded-lg text-sm tracking-wide
                    shadow-lg shadow-orange-500/20
                    hover:enabled:-translate-y-0.5 active:enabled:translate-y-0
-                   transition-all duration-200 flex items-center justify-center gap-2"
-      >
+                   transition-all duration-200 flex items-center justify-center gap-2">
         Sign In →
       </button>
-
-      {/* Switch Form Trigger */}
-      <div className="text-center text-sm text-slate-500">
-        Don&apos;t have an account?{" "}
-        <button
-          type="button"
-          onClick={onSwitch}
-          className="text-orange-500 font-semibold hover:underline focus:outline-none focus:underline"
-        >
-          Create account
-        </button>
-      </div>
     </form>
   );
 }

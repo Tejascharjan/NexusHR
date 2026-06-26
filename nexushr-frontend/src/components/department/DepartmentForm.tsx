@@ -1,14 +1,15 @@
-import InputField from "../common/InputField";
-import SelectField from "../common/SelectField";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAppDispatch, useAppSelector } from "@/state/store";
 
 import { toast } from "react-toastify";
-import { departmentSchema, type DepartmentFormData } from "../validation/departmentSchema";
 import { useEffect } from "react";
 import { getAllEmployees } from "@/state/employeeSlice";
-import { createDepartment, updateDepartment, type Department } from "@/state/departmentSlice";
+import { createDepartment, updateDepartment } from "@/state/departmentSlice";
+import { departmentSchema, type DepartmentFormData } from "@/validations/departmentSchema";
+import InputField from "../common/InputField";
+import SelectField from "../common/SelectField";
+import type { Department } from "@/types/DepartmentTypes";
 
 interface Props {
   selectedDepartment?: Department | null;
@@ -97,7 +98,6 @@ const DepartmentForm = ({ selectedDepartment, onSuccess }: Props) => {
 
           <SelectField label="Status" {...register("isActive")} error={errors.isActive?.message}>
             <option value="true">ACTIVE</option>
-
             <option value="false">INACTIVE</option>
           </SelectField>
         </div>

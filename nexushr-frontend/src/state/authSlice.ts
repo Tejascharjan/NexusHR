@@ -1,4 +1,5 @@
 import { api } from "@/config/Api";
+import type { User } from "@/types/UserTypes";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 export const signin = createAsyncThunk<any, any>(
@@ -63,12 +64,7 @@ export const fetchUserProfile = createAsyncThunk(
   },
 );
 
-interface User {
-  id: number;
-  email: string;
-  name: string;
-  role: string;
-}
+
 
 interface AuthState {
   jwt: string | null;

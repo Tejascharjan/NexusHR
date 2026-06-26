@@ -16,4 +16,6 @@ public interface AttendanceService {
     List<AttendanceResponse> getAttendanceByDate(LocalDate date);
 
     Page<MonthlyAttendanceResponse> getMonthlyAttendance(MonthlyAttendanceFilterRequest request);
+
+    Page<AttendanceResponse> getFilteredAttendance(AttendanceRequest request);
 }
