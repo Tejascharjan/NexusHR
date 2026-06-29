@@ -2,10 +2,27 @@ import PayrollFilters from "@/components/payroll/PayrollFilters";
 import PayrollGenerationModal from "@/components/payroll/PayrollGenerationModal";
 import PayrollStats from "@/components/payroll/PayrollStats";
 import PayrollTable from "@/components/payroll/PayrollTable";
-import { useState } from "react";
+import { filterPayroll } from "@/state/payrollSlice";
+import { useAppDispatch } from "@/state/store";
+import { useEffect, useState } from "react";
 
 const PayrollPage = () => {
+  const dispatch = useAppDispatch();
+  const today = new Date();
   const [showGenerateModal, setShowGenerateModal] = useState(false);
+
+  const [filters, setFilters] = useState({
+    payrollMonth: today.getMonth() + 1,
+    payrollYear: today.getFullYear(),
+    departmentId: undefined as number | undefined,
+    status: undefined as string | undefined,
+    page: 0,
+    size: 10,
+  });
+
+  useEffect(() => {
+    dispatch(filterPayroll(filters));
+  }, [dispatch, filters]);
 
   return (
     <div className="space-y-6">
@@ -20,32 +37,16 @@ const PayrollPage = () => {
 
         <button
           onClick={() => setShowGenerateModal(true)}
-          className="
-            px-5
-            py-2.5
-            rounded-xl
-            bg-orange-500
-            hover:bg-orange-600
-            text-white
-            transition-all
-          ">
+          className="px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white  transition-all">
           Generate Payroll
         </button>
       </div>
 
-      {/* Stats */}
-
       <PayrollStats />
 
-      {/* Filters */}
+      <PayrollFilters filters={filters} setFilters={setFilters} />
 
-      <PayrollFilters />
-
-      {/* Table */}
-
-      <PayrollTable />
-
-      {/* Modal */}
+      <PayrollTable filters={filters} setFilters={setFilters} />
 
       {showGenerateModal && <PayrollGenerationModal onClose={() => setShowGenerateModal(false)} />}
     </div>

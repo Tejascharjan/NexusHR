@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class LeaveRequestDTO {
+public class LeaveRequest {
     private Long employeeId;
     private LeaveType leaveType;
     private LocalDate fromDate;

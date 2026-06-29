@@ -8,12 +8,11 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "leave_requests")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LeaveRequest {
+public class Leave {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

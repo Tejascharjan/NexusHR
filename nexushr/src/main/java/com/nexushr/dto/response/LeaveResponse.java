@@ -1,6 +1,5 @@
 package com.nexushr.dto.response;
 
-import com.nexushr.entity.Employee;
 import com.nexushr.entity.LeaveStatus;
 import com.nexushr.entity.LeaveType;
 import lombok.Data;
@@ -9,7 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
-public class LeaveRequestResponse {
+public class LeaveResponse {
     private Long id;
     private Long employeeId;
     private Long approverId;

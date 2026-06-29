@@ -1,31 +1,17 @@
 import { api } from "@/config/Api";
+import type { Payroll, PayrollFilterRequest, PayrollStatistics } from "@/types/PayrollTyepes";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-
-export interface Payroll {
-  payrollId: number;
-  employeeId: number;
-  employeeName: string;
-  payrollMonth: number;
-  payrollYear: number;
-  basicSalary: number;
-  grossSalary: number;
-  netSalary: number;
-  totalDeductions: number;
-  totalAllowances: number;
-  status: "PENDING" | "APPROVED" | "PAID";
-}
-
-export interface PayrollStats {
-  totalPayroll: number;
-  averageSalary: number;
-  pendingPayrolls: number;
-  paidPayrolls: number;
-}
 
 interface PayrollState {
   payroll: Payroll | null;
   payrolls: Payroll[];
-  stats: PayrollStats | null;
+  stats: PayrollStatistics | null;
+
+  page: number;
+  size: number;
+  totalPages: number;
+  totalElements: number;
+
   loading: boolean;
   error: string | null;
 }
@@ -34,6 +20,12 @@ const initialState: PayrollState = {
   payroll: null,
   payrolls: [],
   stats: null,
+
+  page: 0,
+  size: 10,
+  totalPages: 0,
+  totalElements: 0,
+
   loading: false,
   error: null,
 };
@@ -44,7 +36,12 @@ export const generatePayroll = createAsyncThunk(
   ) => {
     try {
       const response = await api.post(`/api/payrolls/generate`, payrollData);
-      dispatch(getPayrolls());
+      dispatch(filterPayroll({
+        payrollMonth: payrollData.payrollMonth,
+        payrollYear: payrollData.payrollYear,
+        page: 0,
+        size: 10,
+      }));
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -54,21 +51,20 @@ export const generatePayroll = createAsyncThunk(
   },
 );
 
-export const getPayrolls = createAsyncThunk(
-  "payroll/getPayrolls",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await api.get(`/api/payrolls`);
-      console.log('payrolls', response.data);
 
+export const filterPayroll = createAsyncThunk(
+  "payroll/filterPayroll",
+  async (filter: PayrollFilterRequest, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/api/payrolls/filter", filter);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.message || "Failed to fetch payrolls",
-      );
+        error.response?.data?.message || "Failed to filter payrolls"
+      )
     }
-  },
-);
+  }
+)
 
 export const downloadSalarySlip = createAsyncThunk(
   "payroll/downloadSalarySlip",
@@ -106,8 +102,7 @@ export const markPayrollPaid = createAsyncThunk(
   "payroll/markPayrollPaid",
   async (id: number, { rejectWithValue }) => {
     try {
-      const response = await api.patch(`/admin/payroll/${id}/pay`);
-
+      const response = await api.put(`/api/payrolls/${id}/paid`);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -178,15 +173,28 @@ export const payrollSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getPayrolls.pending, (state) => {
+      .addCase(filterPayroll.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
-      .addCase(getPayrolls.fulfilled, (state, action) => {
+      .addCase(filterPayroll.fulfilled, (state, action) => {
         state.loading = false;
-        state.payrolls = action.payload;
+
+        state.payrolls = action.payload.payrolls;
+
+        state.stats = action.payload.statistics;
+
+        state.page = action.payload.page;
+
+        state.size = action.payload.size;
+
+        state.totalPages = action.payload.totalPages;
+
+        state.totalElements = action.payload.totalElements;
       })
-      .addCase(getPayrolls.rejected, (state, action) => {
+      .addCase(filterPayroll.rejected, (state, action) => {
         state.loading = false;
+
         state.error = action.payload as string;
       })
       .addCase(generatePayroll.pending, (state) => {

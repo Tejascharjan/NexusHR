@@ -72,5 +72,5 @@ public class Employee {
 
     @Builder.Default
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
-    private List<LeaveRequest> leaveRequests = new ArrayList<>();
+    private List<Leave> leaves = new ArrayList<>();
 }

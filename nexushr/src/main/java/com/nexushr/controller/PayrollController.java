@@ -1,12 +1,15 @@
 package com.nexushr.controller;
 
+import com.nexushr.dto.request.PayrollFilterRequest;
 import com.nexushr.dto.request.PayrollRequest;
+import com.nexushr.dto.response.PayrollPageResponse;
 import com.nexushr.dto.response.PayrollResponse;
 import com.nexushr.service.PayrollService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,13 +22,27 @@ public class PayrollController {
     private final PayrollService payrollService;
 
     @PostMapping("/generate")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> generatePayroll(@RequestBody PayrollRequest request) {
         return ResponseEntity.ok(payrollService.generateMonthPayroll(request));
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
     public ResponseEntity<List<PayrollResponse>> getPayroll() {
         return ResponseEntity.ok(payrollService.getPayroll());
+    }
+
+    @PutMapping("/{id}/paid")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<PayrollResponse> markAsPaid(@PathVariable Long id) {
+        return ResponseEntity.ok(payrollService.markAsPaid(id));
+    }
+
+    @PostMapping("filter")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
+    public ResponseEntity<PayrollPageResponse> filterPayroll(@RequestBody PayrollFilterRequest request) {
+        return ResponseEntity.ok(payrollService.filterPayroll(request));
     }
 
     @GetMapping("/{payrollId}/salary-slip")
@@ -51,10 +68,5 @@ public class PayrollController {
     @GetMapping("/employee/{employeeId}")
     public ResponseEntity<List<PayrollResponse>> getEmployeePayrolls(@PathVariable Long employeeId) {
         return ResponseEntity.ok(payrollService.getEmployeePayrolls(employeeId));
-    }
-
-    @PutMapping("/{id}/paid")
-    public ResponseEntity<PayrollResponse> markAsPaid(@PathVariable Long id) {
-        return ResponseEntity.ok(payrollService.markAsPaid(id));
     }
 }
