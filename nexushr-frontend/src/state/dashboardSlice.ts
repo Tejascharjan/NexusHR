@@ -1,12 +1,13 @@
 import { api } from "@/config/Api";
+import type { DashboardResponse } from "@/types/DashboardTypes";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-export const fetchGlobalAdminMetrics = createAsyncThunk(
-  "dashboard/fetchGlobalAdminMetrics",
+export const getDashboard = createAsyncThunk(
+  "dashboard/getDashboard",
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await api.get<any[]>("/admin/dashboard/global");
-      return data;
+      const response = await api.get("/api/dashboard");
+      return response.data;
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data || "Failed to fetch dashboard stats",
@@ -16,13 +17,15 @@ export const fetchGlobalAdminMetrics = createAsyncThunk(
 );
 
 interface DashboardState {
-  stats: any;
+  dashboard: DashboardResponse | null;
   loading: boolean;
+  error: string | null;
 }
 
 const initialState: DashboardState = {
-  stats: null,
+  dashboard: null,
   loading: false,
+  error: null,
 };
 
 const dashboardSlice = createSlice({
@@ -31,15 +34,16 @@ const dashboardSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchGlobalAdminMetrics.pending, (state) => {
+      .addCase(getDashboard.pending, (state) => {
         state.loading = true;
       })
-      .addCase(fetchGlobalAdminMetrics.fulfilled, (state, action) => {
-        state.stats = action.payload;
+      .addCase(getDashboard.fulfilled, (state, action) => {
         state.loading = false;
+        state.dashboard = action.payload;
       })
-      .addCase(fetchGlobalAdminMetrics.rejected, (state) => {
+      .addCase(getDashboard.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });

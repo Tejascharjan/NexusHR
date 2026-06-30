@@ -3,6 +3,7 @@ package com.nexushr.repository;
 
 import com.nexushr.entity.Department;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,4 +15,10 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
     List<Department> findByIsActiveTrue();
 
     boolean existsByName(String name);
+
+    @Query("""
+            SELECT COUNT(d) FROM Department d
+            WHERE d.isActive=true
+        """)
+    Long getActiveDepartments();
 }

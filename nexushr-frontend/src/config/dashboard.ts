@@ -10,7 +10,7 @@ import {
 export const DASHBOARD_STATS_CONFIG = {
   ADMIN: [
     {
-      key: "activeEmployees",
+      key: "totalEmployees",
       title: "Active Employees",
       icon: Users,
     },
@@ -20,12 +20,12 @@ export const DASHBOARD_STATS_CONFIG = {
       icon: Building2,
     },
     {
-      key: "totalPayroll",
+      key: "currentMonthPayroll",
       title: "Payroll",
       icon: IndianRupee,
     },
     {
-      key: "attendancePercentage",
+      key: "presentToday",
       title: "Attendance",
       icon: Calendar,
     },

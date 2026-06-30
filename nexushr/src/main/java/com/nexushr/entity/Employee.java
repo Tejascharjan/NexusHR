@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,4 +74,6 @@ public class Employee {
     @Builder.Default
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
     private List<Leave> leaves = new ArrayList<>();
+
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

@@ -1,5 +1,6 @@
 package com.nexushr.repository;
 
+import com.nexushr.dto.response.AttendanceChartResponse;
 import com.nexushr.dto.response.MonthlyAttendanceResponse;
 import com.nexushr.entity.Attendance;
 import com.nexushr.entity.Attendancestatus;
@@ -54,4 +55,31 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
                                       @Param("employeeId") Long employeeId,
                                       @Param("status") Attendancestatus status,
                                       Pageable pageable);
+
+
+    @Query("""
+        SELECT COUNT(a) FROM Attendance a
+        WHERE a.date = :today AND a.status = 'PRESENT'
+        """)
+    Long getTodayPresent(LocalDate today);
+
+
+    @Query("""
+        SELECT COUNT(a) FROM Attendance a
+        WHERE a.date = :today AND a.status ='ABSENT'
+    """)
+    Long getTodayAbsent(LocalDate today);
+
+
+    @Query("""
+        SELECT new com.nexushr.dto.response.AttendanceChartResponse(
+            CAST(a.date as string),
+            SUM(CASE WHEN a.status='PRESENT' THEN 1L ELSE 0L END),
+            SUM(CASE WHEN a.status='ABSENT' THEN 1L ELSE 0L END),
+            SUM(CASE WHEN a.status='LEAVE' THEN 1L ELSE 0L END)
+        ) FROM Attendance a
+        GROUP BY a.date
+        ORDER BY a.date DESC
+    """)
+    List<AttendanceChartResponse> getAttendanceTrend();
 }

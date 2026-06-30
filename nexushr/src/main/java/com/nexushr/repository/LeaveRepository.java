@@ -29,4 +29,11 @@ public interface LeaveRepository extends JpaRepository<Leave, Long> {
                              @Param("status") LeaveStatus status,
                              Pageable pageable);
 
+    @Query("""
+        SELECT COUNT(l) FROM Leave l
+        WHERE l.status = 'PENDING' 
+    """)
+    Long getPendingLeaves();
+
+    Page<Leave> findByStatusOrderByRequestedAtDesc(LeaveStatus status, Pageable pageable);
 }

@@ -1,5 +1,6 @@
 package com.nexushr.repository;
 
+import com.nexushr.dto.response.PayrollChartResponse;
 import com.nexushr.dto.response.PayrollStatisticsResponse;
 import com.nexushr.entity.Payroll;
 import com.nexushr.entity.PayrollStatus;
@@ -45,4 +46,20 @@ public interface PayrollRepository extends JpaRepository<Payroll, Long> {
             ORDER BY p.employee.firstName
             """)
     Page<Payroll> filterPayroll(Integer month, Integer year, Long departmentId, PayrollStatus status, Pageable pageable);
+
+
+    @Query("""
+        SELECT COALESCE(SUM(p.netSalary),0) FROM Payroll p
+        WHERE p.payrollMonth =:month AND p.payrollYear =:year
+    """)
+    Double getCurrentPayroll(Integer month, Integer year);
+
+    @Query("""
+        SELECT new com.nexushr.dto.response.PayrollChartResponse(
+            CONCAT(CAST(p.payrollMonth as string),'/',CAST(p.payrollYear as string)),
+        SUM(p.netSalary)) FROM Payroll p
+        GROUP BY p.payrollYear, p.payrollMonth
+        ORDER BY p.payrollYear, p.payrollMonth
+    """)
+    List<PayrollChartResponse> getPayrollTrend();
 }
