@@ -16,7 +16,7 @@ public interface PayrollRepository extends JpaRepository<Payroll, Long> {
 
     boolean existsByEmployeeIdAndPayrollMonthAndPayrollYear(Long employeeId, Integer payrollMonth, Integer payrollYear);
 
-    List<Payroll> findByEmployeeId(Long employeeId);
+    Page<Payroll> findByEmployeeId(Long employeeId, Pageable pageable);
 
     List<Payroll> findByPayrollMonthAndPayrollYear(Integer payrollMonth, Integer payrollYear);
 

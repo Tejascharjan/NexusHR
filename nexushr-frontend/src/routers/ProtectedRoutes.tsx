@@ -7,7 +7,7 @@ interface ProtectedRoutesProps {
 }
 
 const ProtectedRoutes = ({ children, allowedRoles }: ProtectedRoutesProps) => {
-  const { user, isLoggedIn, loading } = useAppSelector((store) => store.auth);
+  const { user, isLoggedIn } = useAppSelector((store) => store.auth);
   const jwt = localStorage.getItem("jwt");
 
   if (!jwt && !isLoggedIn) {

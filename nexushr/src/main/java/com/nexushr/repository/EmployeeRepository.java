@@ -50,4 +50,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     List<DepartmentChartResponse> getDepartmentDistribution();
 
     Page<Employee> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    boolean existsByEmployeeCode(String empCode);
 }

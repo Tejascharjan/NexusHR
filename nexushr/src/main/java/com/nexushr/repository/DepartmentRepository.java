@@ -21,4 +21,6 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
             WHERE d.isActive=true
         """)
     Long getActiveDepartments();
+
+    List<Department> findByManager_Id(Long managerId);
 }

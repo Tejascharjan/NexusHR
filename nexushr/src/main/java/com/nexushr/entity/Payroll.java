@@ -25,16 +25,21 @@ public class Payroll {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String payrollNumber;
 
     private Integer payrollMonth;
     private Integer payrollYear;
 
     private Integer totalWorkingDays;
-    private Integer payableDays;
+    private Double payableDays;
 
     private Integer presentDays;
     private Integer absentDays;
-    private Integer leaveDays;
+    private Integer halfDays;
+    private Integer paidLeaveDays;
+    private Integer unpaidLeaveDays;
+    private Integer holidayDays;
+    private Integer weekendDays;
 
     private Double basicSalary;
     private Double grossSalary;
@@ -42,7 +47,8 @@ public class Payroll {
     private Double totalDeductions;
     private Double netSalary;
 
-    private LocalDate processdDate;
+    private LocalDate generatedDate;
+    private LocalDate processedDate;
     private LocalDate paidDate;
 
     @Enumerated(EnumType.STRING)

@@ -9,9 +9,10 @@ import { toast } from "react-toastify";
 interface Props {
   filters: any;
   setFilters: React.Dispatch<React.SetStateAction<any>>;
+  isAdmin: boolean;
 }
 
-const PayrollTable = ({ filters, setFilters }: Props) => {
+const PayrollTable = ({ filters, setFilters, isAdmin }: Props) => {
   const dispatch = useAppDispatch();
   const { payrolls, totalPages, page, loading } = useAppSelector((store) => store.payroll);
 
@@ -20,7 +21,7 @@ const PayrollTable = ({ filters, setFilters }: Props) => {
       const blob = (await dispatch(downloadSalarySlip(payrollId)).unwrap()) as Blob;
       downloadFile(blob, `salary-slip-${payrollId}.pdf`);
     } catch (error: any) {
-      console.log("Failed to download salary slip");
+      toast.error("Unable to download salary slip");
     }
   };
 
@@ -34,7 +35,7 @@ const PayrollTable = ({ filters, setFilters }: Props) => {
       const blob = await dispatch(downloadRtgs({ month: filters.payrollMonth, year: filters.payrollYear })).unwrap();
       downloadFile(blob, `RTGS-${filters.payrollMonth}-${filters.payrollYear}.xlsx`);
     } catch (error: any) {
-      console.log("Failed to download rtgs", error);
+      toast.error("Failed to download rtgs");
     }
   };
 
@@ -49,12 +50,14 @@ const PayrollTable = ({ filters, setFilters }: Props) => {
 
   return (
     <div className="bg-card-bg border border-slate-800 rounded-2xl overflow-hiddens">
-      <div className="p-4 flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-white">Payroll Records</h2>
-        <button onClick={handleRtgsDownload} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-green-600 hover:bg-green-700 text-white">
-          <Download size={18} />
-        </button>
-      </div>
+      {isAdmin && (
+        <div className="p-4 flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-white">Payroll Records</h2>
+          <button onClick={handleRtgsDownload} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-green-600 hover:bg-green-700 text-white">
+            <Download size={18} />
+          </button>
+        </div>
+      )}
 
       <div className="overflow-x-auto">
         <table className="w-full">

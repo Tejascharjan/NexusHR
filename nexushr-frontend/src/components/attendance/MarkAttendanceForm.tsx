@@ -21,9 +21,9 @@ const MarkAttendanceForm = () => {
     reset,
   } = useForm<AttendanceFormData>({ resolver: zodResolver(attendanceSchema) });
 
-  const onSubmit = (data: AttendanceFormData) => {
+  const onSubmit = async (data: AttendanceFormData) => {
     try {
-      dispatch(createAttendance(data));
+      await dispatch(createAttendance(data)).unwrap();
       toast.success("Attendance marked successfully");
       reset();
     } catch (error: any) {

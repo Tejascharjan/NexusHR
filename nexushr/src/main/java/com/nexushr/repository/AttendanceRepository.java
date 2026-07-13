@@ -43,6 +43,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
                                                          @Param("departmentId") Long departmentId,
                                                          Pageable pageable);
 
+
     @Query("""
             SELECT a FROM Attendance a
             WHERE (cast(:date as date) IS NULL OR a.date = :date)
@@ -82,4 +83,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
         ORDER BY a.date DESC
     """)
     List<AttendanceChartResponse> getAttendanceTrend();
+
+    List<Attendance> findByEmployeeIdAndDateBetween(Long employeeId, LocalDate startDate, LocalDate endDate);
 }

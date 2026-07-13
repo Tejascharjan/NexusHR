@@ -7,6 +7,7 @@ import ProtectedRoutes from "./routers/ProtectedRoutes";
 import AdminRouters from "./routers/AdminRouters";
 import EmployeeRouters from "./routers/EmployeeRouters";
 import Homepage from "./pages/Homepage";
+import ManagerRouters from "./routers/ManagerRouters";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -36,7 +37,7 @@ function App() {
           path="/manager/*"
           element={
             <ProtectedRoutes allowedRoles={["MANAGER"]}>
-              <div>Manager Routes</div>
+              <ManagerRouters />
             </ProtectedRoutes>
           }
         />

@@ -9,8 +9,6 @@ import {
   BarChart3,
   Star,
   User,
-  LayoutDashboard,
-  Clock3,
   Receipt,
 } from "lucide-react";
 
@@ -78,32 +76,42 @@ export const NAVIGATION_CONFIG: Record<Role, NavigationItem[]> = {
       path: "/manager/dashboard",
     },
     {
+      title: "Departments",
+      icon: Building2,
+      path: "/manager/departments",
+    },
+    {
       title: "Employees",
       icon: Users,
       path: "/manager/employees",
     },
     {
+      title: "Attendance",
+      icon: CalendarCheck,
+      path: "/manager/attendance",
+    },
+    {
+      title: "Monthly Attendance",
+      icon: CalendarDays,
+      path: "/manager/monthly-attendance",
+    },
+    {
       title: "Team Leaves",
       icon: CalendarDays,
       path: "/manager/leaves",
-    }
+    },
+    {
+      title: "Team Payroll",
+      icon: IndianRupee,
+      path: "/manager/payroll",
+    },
   ],
 
   EMPLOYEE: [
     {
-      title: "Dashboard",
-      icon: LayoutDashboard,
-      path: "/employee/dashboard",
-    },
-    {
       title: "My Profile",
       icon: User,
       path: "/employee/profile"
-    },
-    {
-      title: "Attendance",
-      icon: Clock3,
-      path: "/employee/attendance"
     },
     {
       title: "Leaves",

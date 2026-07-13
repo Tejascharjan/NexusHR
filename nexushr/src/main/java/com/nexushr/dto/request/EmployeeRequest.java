@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @Data
 public class EmployeeRequest {
 
+    private String employeeCode;
     private String firstName;
     private String lastName;
     private String email;

@@ -1,8 +1,7 @@
 import DashboardLayout from "@/components/common/DashboardLayout";
-import AttendancePage from "@/pages/AttendancePage";
-import DashboardPage from "@/pages/DashboardPage";
-import MyLeavePage from "@/pages/MyLeavePage";
+import LeavePage from "@/pages/LeavePage";
 import MyProfile from "@/pages/MyProfile";
+import PayrollPage from "@/pages/PayrollPage";
 import { Route, Routes } from "react-router-dom";
 
 const EmployeeRouters = () => {
@@ -10,10 +9,9 @@ const EmployeeRouters = () => {
     <div>
       <Routes>
         <Route element={<DashboardLayout />}>
-          <Route path="dashboard" element={<DashboardPage />} />
           <Route path="profile" element={<MyProfile />} />
-          <Route path="attendance" element={<AttendancePage />} />
-          <Route path="leaves" element={<MyLeavePage />} />
+          <Route path="leaves" element={<LeavePage />} />
+          <Route path="payroll" element={<PayrollPage />} />
         </Route>
       </Routes>
     </div>

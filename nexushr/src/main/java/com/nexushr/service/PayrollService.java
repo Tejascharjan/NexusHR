@@ -21,7 +21,7 @@ public interface PayrollService {
 
     byte[] generateRtgsExcel(Integer month, Integer year);
 
-    List<PayrollResponse> getEmployeePayrolls(Long employeeId);
+    PayrollPageResponse getEmployeePayrolls(PayrollFilterRequest request);
 
     PayrollResponse markAsPaid(Long payrollId);
 }

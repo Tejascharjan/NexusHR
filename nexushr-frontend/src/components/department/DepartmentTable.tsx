@@ -1,17 +1,24 @@
 import { useAppDispatch, useAppSelector } from "@/state/store";
 import { Pencil, Trash2 } from "lucide-react";
 import { useEffect } from "react";
-import { deleteDepartment, getAllDepartments } from "@/state/departmentSlice.ts";
+import { deleteDepartment, getAllDepartments, getDepartmentsByManagerId } from "@/state/departmentSlice.ts";
 import { toast } from "react-toastify";
 import type { Department } from "@/types/DepartmentTypes";
 
 const DepartmentTable = ({ onEdit }: { onEdit: (department: Department) => void }) => {
   const dispatch = useAppDispatch();
   const { department } = useAppSelector((store) => store);
+  const { user } = useAppSelector((store) => store.auth);
 
   useEffect(() => {
-    dispatch(getAllDepartments());
-  }, [dispatch]);
+    if (!user) return;
+
+    if (user?.role === "ADMIN") {
+      dispatch(getAllDepartments());
+    } else {
+      dispatch(getDepartmentsByManagerId(user.id));
+    }
+  }, [dispatch, user]);
 
   const handleDelete = async (id: number) => {
     if (confirm("Are you sure you want to delete this department?")) {
@@ -39,7 +46,7 @@ const DepartmentTable = ({ onEdit }: { onEdit: (department: Department) => void 
 
               <th className="p-4 text-left">Status</th>
 
-              <th className="p-4 text-center">Actions</th>
+              {user?.role === "ADMIN" && <th className="p-4 text-center">Actions</th>}
             </tr>
           </thead>
 
@@ -66,17 +73,19 @@ const DepartmentTable = ({ onEdit }: { onEdit: (department: Department) => void 
                   <span className="px-3 py-1 rounded-full text-xs bg-green-500/10 text-green-400">{department.isActive ? "Active" : "Inactive"}</span>
                 </td>
 
-                <td className="p-4">
-                  <div className="flex justify-center gap-2">
-                    <button onClick={() => onEdit(department)} className="p-2 rounded-lg hover:bg-slate-700/30">
-                      <Pencil size={16} />
-                    </button>
+                {user?.role === "ADMIN" && (
+                  <td className="p-4">
+                    <div className="flex justify-center gap-2">
+                      <button onClick={() => onEdit(department)} className="p-2 rounded-lg hover:bg-slate-700/30">
+                        <Pencil size={16} />
+                      </button>
 
-                    <button onClick={() => handleDelete(department.id)} className="p-2 rounded-lg hover:bg-red-500/10 text-red-400">
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </td>
+                      <button onClick={() => handleDelete(department.id)} className="p-2 rounded-lg hover:bg-red-500/10 text-red-400">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

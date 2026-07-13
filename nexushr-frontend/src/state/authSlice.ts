@@ -12,7 +12,7 @@ export const signin = createAsyncThunk<any, any>(
       if (response.data?.user?.role === "MANAGER") {
         navigate("/manager/dashboard");
       } else if (response.data?.user?.role === "EMPLOYEE") {
-        navigate("/employee/dashboard");
+        navigate("/employee/profile");
       } else if (response.data?.user?.role === "ADMIN") {
         navigate("/admin/dashboard");
       }
@@ -56,7 +56,6 @@ export const fetchUserProfile = createAsyncThunk(
       const response = await api.get("/auth/profile");
       return response.data;
     } catch (error: any) {
-      console.log("error:-", error);
       return rejectWithValue(
         error.response?.data || "Failed to fetch user profile",
       );
@@ -86,24 +85,44 @@ const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(signin.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(signin.fulfilled, (state, action) => {
         state.jwt = action.payload.token;
         state.user = action.payload.user;
         state.isLoggedIn = true;
+        state.loading = false;
+        state.loading = false;
       })
       .addCase(signin.rejected, (state, action) => {
         state.jwt = null;
         state.user = null;
         state.isLoggedIn = false;
+        state.loading = false;
+      })
+      .addCase(signup.pending, (state) => {
+        state.loading = true;
       })
       .addCase(signup.fulfilled, (state, action) => {
         state.jwt = action.payload.token;
         state.user = action.payload.user;
         state.isLoggedIn = true;
+        state.loading = false;
+      })
+      .addCase(signup.rejected, (state, action) => {
+        state.jwt = null;
+        state.user = null;
+        state.isLoggedIn = false;
+        state.loading = false;
+      })
+      .addCase(fetchUserProfile.pending, (state) => {
+        state.loading = true;
       })
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.isLoggedIn = true;
+        state.loading = false;
       })
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.user = null;

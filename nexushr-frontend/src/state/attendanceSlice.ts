@@ -19,7 +19,6 @@ export const createAttendance = createAsyncThunk(
 export const filterAttendance = createAsyncThunk("/filter/attendance", async (filterData: any, { rejectWithValue }) => {
   try {
     const response = await api.post("/filter/attendance", filterData);
-    console.log("attendance ", response);
     return response.data;
   } catch (error: any) {
     return rejectWithValue(

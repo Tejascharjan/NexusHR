@@ -8,6 +8,7 @@ public class PayrollFilterRequest {
     private Integer payrollMonth;
     private Integer payrollYear;
     private Long departmentId;
+    private Long employeeId;
     private PayrollStatus status;
     private int page=0;
     private int pageSize=10;

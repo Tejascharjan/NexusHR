@@ -5,16 +5,15 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
 }
 
-const InputField = forwardRef<HTMLInputElement, Props>(
-  ({ label, error, ...props }, ref) => {
-    return (
-      <div>
-        <label className="block text-sm text-slate-300 mb-2">{label}</label>
+const InputField = forwardRef<HTMLInputElement, Props>(({ label, error, ...props }, ref) => {
+  return (
+    <div>
+      <label className="block text-sm text-slate-300 mb-2">{label}</label>
 
-        <input
-          ref={ref}
-          {...props}
-          className={`
+      <input
+        ref={ref}
+        {...props}
+        className={`
             w-full
             bg-[#020817]
             border
@@ -24,19 +23,14 @@ const InputField = forwardRef<HTMLInputElement, Props>(
             text-white
             outline-none
             transition-all
-            ${
-              error
-                ? "border-red-500"
-                : "border-slate-700 focus:border-orange-500"
-            }
+            ${error ? "border-red-500" : "border-slate-700 focus:border-orange-500"}
           `}
-        />
+      />
 
-        {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
-      </div>
-    );
-  },
-);
+      {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
+    </div>
+  );
+});
 
 InputField.displayName = "InputField";
 

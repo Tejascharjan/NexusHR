@@ -32,14 +32,21 @@ public class LeaveController {
         return ResponseEntity.ok(leaveService.filterLeaves(request));
     }
 
-    @PutMapping("/{leaveId}/approve")
-    public ResponseEntity<LeaveResponse> approveLeave(@PathVariable Long leaveId, @RequestParam Long approverId, @RequestParam(required = false) String remarks){
-        return ResponseEntity.ok(leaveService.approveLeave(leaveId, approverId, remarks));
+    @PostMapping("/employee")
+    public ResponseEntity<Page<LeaveResponse>> getLeavesByEmployee(@RequestBody LeaveFilterRequest request) {
+        return ResponseEntity.ok(leaveService.getLeavesByEmployee(request));
     }
 
-    @PutMapping("/{leaveId}/reject")
-    public ResponseEntity<LeaveResponse> rejectLeave(@PathVariable Long leaveId, @RequestParam Long approverId, @RequestParam(required = false) String remarks){
-        return ResponseEntity.ok(leaveService.rejectLeave(leaveId, approverId, remarks));
+    @PutMapping("/approve")
+    public ResponseEntity<LeaveResponse> approveLeave(@RequestBody LeaveFilterRequest request) {
+        return ResponseEntity.ok(leaveService.approveLeave(request.getLeaveId(), request.getApproverId(), request.getRemark()));
+    }
+
+
+
+    @PutMapping("/reject")
+    public ResponseEntity<LeaveResponse> rejectLeave(@RequestBody LeaveFilterRequest request) {
+        return ResponseEntity.ok(leaveService.rejectLeave(request.getLeaveId(), request.getApproverId(), request.getRemark()));
     }
 
     @PutMapping("/{leaveId}/cancel")

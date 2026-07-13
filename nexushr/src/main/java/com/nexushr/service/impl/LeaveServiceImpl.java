@@ -54,6 +54,13 @@ public class LeaveServiceImpl implements LeaveService {
     }
 
     @Override
+    public Page<LeaveResponse> getLeavesByEmployee(LeaveFilterRequest request) {
+        Pageable pageable = PageRequest.of(request.getPage(),  request.getPageSize(), Sort.by("requestedAt").descending());
+        Page<Leave> leaves = leaveRepository.findByEmployeeId(request.getEmployeeId(), pageable);
+        return leaves.map(this::mapToLeaveResponse);
+    }
+
+    @Override
     public LeaveResponse approveLeave(Long leaveId, Long approverId, String remark) {
         Leave leave = leaveRepository.findById(leaveId).orElseThrow(() -> new RuntimeException("Leave not found"));
 

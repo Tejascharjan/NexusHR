@@ -48,7 +48,6 @@ public class AttendanceServiceImpl implements AttendanceService {
         markAttendance.setCheckIn(attendance.getCheckIn());
         markAttendance.setCheckOut(attendance.getCheckOut());
         markAttendance.setStatus(attendance.getStatus());
-        markAttendance.setBiometricVerified(attendance.getBiometricVerified());
         markAttendance.setWorkedHours(attendance.getWorkedHours());
         Attendance attendance1 = attendanceRepository.save(markAttendance);
         return mapToAttendanceResponse(attendance1);
@@ -99,7 +98,6 @@ public class AttendanceServiceImpl implements AttendanceService {
                 attendance.getCheckIn(),
                 attendance.getCheckOut(),
                 attendance.getStatus(),
-                attendance.getBiometricVerified(),
                 attendance.getWorkedHours()
         );
     }

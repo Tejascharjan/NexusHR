@@ -7,6 +7,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.nexushr.dto.request.PayrollFilterRequest;
 import com.nexushr.dto.request.PayrollRequest;
+import com.nexushr.dto.response.AttendanceSummary;
 import com.nexushr.dto.response.PayrollPageResponse;
 import com.nexushr.dto.response.PayrollResponse;
 import com.nexushr.dto.response.PayrollStatisticsResponse;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.List;
@@ -44,6 +46,7 @@ public class PayrollServiceImpl implements PayrollService {
     private final EmployeeCompensationRepository compensationRepository;
     private final EmployeeAllowanceRepository allowanceRepository;
     private final EmployeeDeductionRepository deductionRepository;
+    private final AttendanceRepository attendanceRepository;
 
     @Override
     public String generatePayroll(PayrollRequest request) {
@@ -76,23 +79,23 @@ public class PayrollServiceImpl implements PayrollService {
         Payroll payroll = payrollRepository.findById(payrollId).orElseThrow(() -> new RuntimeException("Payroll not found"));
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            Document document = new Document(PageSize.A4,25,25,25,25);
-            PdfWriter.getInstance(document,outputStream);
+            Document document = new Document(PageSize.A4, 25, 25, 25, 25);
+            PdfWriter.getInstance(document, outputStream);
             document.open();
 
-            BaseColor PRIMARY = new BaseColor(249,115,22);
-            BaseColor LIGHT_ORANGE = new BaseColor(255,245,238);
-            BaseColor HEADER_BG = new BaseColor(245,245,245);
-            BaseColor BORDER = new BaseColor(220,220,220);
+            BaseColor PRIMARY = new BaseColor(249, 115, 22);
+            BaseColor LIGHT_ORANGE = new BaseColor(255, 245, 238);
+            BaseColor HEADER_BG = new BaseColor(245, 245, 245);
+            BaseColor BORDER = new BaseColor(220, 220, 220);
             BaseColor WHITE = BaseColor.WHITE;
 
-            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD,20,WHITE);
-            Font headingFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD,13,PRIMARY);
-            Font labelFont =FontFactory.getFont(FontFactory.HELVETICA_BOLD,10);
-            Font valueFont =FontFactory.getFont(FontFactory.HELVETICA,10);
-            Font tableHeaderFont =FontFactory.getFont(FontFactory.HELVETICA_BOLD,10,WHITE);
-            Font totalFont =FontFactory.getFont(FontFactory.HELVETICA_BOLD,12,PRIMARY);
-            Font footerFont =FontFactory.getFont(FontFactory.HELVETICA,9,BaseColor.GRAY);
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, WHITE);
+            Font headingFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 13, PRIMARY);
+            Font labelFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
+            Font valueFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
+            Font tableHeaderFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, WHITE);
+            Font totalFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, PRIMARY);
+            Font footerFont = FontFactory.getFont(FontFactory.HELVETICA, 9, BaseColor.GRAY);
 
             PdfPTable companyTable = new PdfPTable(1);
             companyTable.setWidthPercentage(100);
@@ -100,10 +103,10 @@ public class PayrollServiceImpl implements PayrollService {
             companyCell.setBackgroundColor(PRIMARY);
             companyCell.setBorder(Rectangle.NO_BORDER);
             companyCell.setPadding(15);
-            Paragraph companyName =new Paragraph("NEXUSHR", titleFont);
+            Paragraph companyName = new Paragraph("NEXUSHR", titleFont);
             companyName.setAlignment(Element.ALIGN_CENTER);
 
-            Paragraph salarySlip =new Paragraph("Salary Slip",FontFactory.getFont(FontFactory.HELVETICA_BOLD,12,WHITE));
+            Paragraph salarySlip = new Paragraph("Salary Slip", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, WHITE));
             salarySlip.setAlignment(Element.ALIGN_CENTER);
             companyCell.addElement(companyName);
             companyCell.addElement(salarySlip);
@@ -114,43 +117,43 @@ public class PayrollServiceImpl implements PayrollService {
             PdfPTable infoTable = new PdfPTable(2);
             infoTable.setWidthPercentage(100);
             infoTable.setSpacingAfter(15);
-            infoTable.setWidths(new float[]{1,1});
+            infoTable.setWidths(new float[]{1, 1});
 
             PdfPCell employeeCell = new PdfPCell();
             employeeCell.setBorder(Rectangle.NO_BORDER);
-            employeeCell.addElement(new Phrase("Employee Name",labelFont));
-            employeeCell.addElement(new Phrase(payroll.getEmployee().getFirstName()+" "+payroll.getEmployee().getLastName(),valueFont));
+            employeeCell.addElement(new Phrase("Employee Name", labelFont));
+            employeeCell.addElement(new Phrase(payroll.getEmployee().getFirstName() + " " + payroll.getEmployee().getLastName(), valueFont));
             infoTable.addCell(employeeCell);
 
             PdfPCell designationCell = new PdfPCell();
             designationCell.setBorder(Rectangle.NO_BORDER);
-            designationCell.addElement(new Phrase("Designation",labelFont));
-            designationCell.addElement(new Phrase(payroll.getEmployee().getDesignation(),valueFont));
+            designationCell.addElement(new Phrase("Designation", labelFont));
+            designationCell.addElement(new Phrase(payroll.getEmployee().getDesignation(), valueFont));
             infoTable.addCell(designationCell);
 
             PdfPCell departmentCell = new PdfPCell();
             departmentCell.setBorder(Rectangle.NO_BORDER);
-            departmentCell.addElement(new Phrase("Department",labelFont));
-            departmentCell.addElement(new Phrase(payroll.getEmployee().getDepartment().getName() ,valueFont));
+            departmentCell.addElement(new Phrase("Department", labelFont));
+            departmentCell.addElement(new Phrase(payroll.getEmployee().getDepartment().getName(), valueFont));
             infoTable.addCell(departmentCell);
 
             PdfPCell employeeIdCell = new PdfPCell();
             employeeIdCell.setBorder(Rectangle.NO_BORDER);
-            employeeIdCell.addElement(new Phrase("Employee ID",labelFont));
-            employeeIdCell.addElement(new Phrase(String.valueOf(payroll.getEmployee().getId()),valueFont));
+            employeeIdCell.addElement(new Phrase("Employee ID", labelFont));
+            employeeIdCell.addElement(new Phrase(String.valueOf(payroll.getEmployee().getId()), valueFont));
             infoTable.addCell(employeeIdCell);
 
-            String month = Month.of(payroll.getPayrollMonth()).getDisplayName(TextStyle.FULL,Locale.ENGLISH);
+            String month = Month.of(payroll.getPayrollMonth()).getDisplayName(TextStyle.FULL, Locale.ENGLISH);
             PdfPCell monthCell = new PdfPCell();
             monthCell.setBorder(Rectangle.NO_BORDER);
-            monthCell.addElement(new Phrase("Payroll Month",labelFont));
-            monthCell.addElement(new Phrase(month+" "+payroll.getPayrollYear(),valueFont));
+            monthCell.addElement(new Phrase("Payroll Month", labelFont));
+            monthCell.addElement(new Phrase(month + " " + payroll.getPayrollYear(), valueFont));
             infoTable.addCell(monthCell);
 
             PdfPCell dateCell = new PdfPCell();
             dateCell.setBorder(Rectangle.NO_BORDER);
-            dateCell.addElement(new Phrase("Generated On",labelFont));
-            dateCell.addElement(new Phrase(LocalDate.now().toString(),valueFont));
+            dateCell.addElement(new Phrase("Generated On", labelFont));
+            dateCell.addElement(new Phrase(LocalDate.now().toString(), valueFont));
             infoTable.addCell(dateCell);
 
             document.add(infoTable);
@@ -189,7 +192,7 @@ public class PayrollServiceImpl implements PayrollService {
 
             salaryTable.setSpacingBefore(10);
 
-            salaryTable.setWidths(new float[]{3,2,3,2});
+            salaryTable.setWidths(new float[]{3, 2, 3, 2});
 
             PdfPCell earningsHeader = new PdfPCell(new Phrase("EARNINGS", tableHeaderFont));
             earningsHeader.setBackgroundColor(PRIMARY);
@@ -221,21 +224,21 @@ public class PayrollServiceImpl implements PayrollService {
                     deductions.size()
             );
 
-            BaseColor alternate = new BaseColor(248,248,248);
+            BaseColor alternate = new BaseColor(248, 248, 248);
 
-            for(int i=0;i<maxRows;i++){
+            for (int i = 0; i < maxRows; i++) {
 
                 BaseColor rowColor =
-                        (i%2==0)?BaseColor.WHITE:alternate;
+                        (i % 2 == 0) ? BaseColor.WHITE : alternate;
 
                 // Earnings Name
 
-                if(i<allowances.size()){
+                if (i < allowances.size()) {
 
                     PayrollItem item = allowances.get(i);
 
                     PdfPCell cell =
-                            new PdfPCell(new Phrase(item.getItemName(),valueFont));
+                            new PdfPCell(new Phrase(item.getItemName(), valueFont));
 
                     cell.setBackgroundColor(rowColor);
 
@@ -245,7 +248,7 @@ public class PayrollServiceImpl implements PayrollService {
 
                     PdfPCell amount =
                             new PdfPCell(new Phrase(
-                                    String.format("₹ %,.2f",item.getAmount()),
+                                    String.format("₹ %,.2f", item.getAmount()),
                                     valueFont));
 
                     amount.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -256,9 +259,9 @@ public class PayrollServiceImpl implements PayrollService {
 
                     salaryTable.addCell(amount);
 
-                }else{
+                } else {
 
-                    PdfPCell empty=new PdfPCell(new Phrase(""));
+                    PdfPCell empty = new PdfPCell(new Phrase(""));
 
                     empty.setBackgroundColor(rowColor);
 
@@ -266,7 +269,7 @@ public class PayrollServiceImpl implements PayrollService {
 
                     salaryTable.addCell(empty);
 
-                    PdfPCell emptyAmount=new PdfPCell(new Phrase(""));
+                    PdfPCell emptyAmount = new PdfPCell(new Phrase(""));
 
                     emptyAmount.setBackgroundColor(rowColor);
 
@@ -278,12 +281,12 @@ public class PayrollServiceImpl implements PayrollService {
 
                 // Deduction
 
-                if(i<deductions.size()){
+                if (i < deductions.size()) {
 
-                    PayrollItem item=deductions.get(i);
+                    PayrollItem item = deductions.get(i);
 
-                    PdfPCell cell=
-                            new PdfPCell(new Phrase(item.getItemName(),valueFont));
+                    PdfPCell cell =
+                            new PdfPCell(new Phrase(item.getItemName(), valueFont));
 
                     cell.setBackgroundColor(rowColor);
 
@@ -291,9 +294,9 @@ public class PayrollServiceImpl implements PayrollService {
 
                     salaryTable.addCell(cell);
 
-                    PdfPCell amount=
+                    PdfPCell amount =
                             new PdfPCell(new Phrase(
-                                    String.format("₹ %,.2f",item.getAmount()),
+                                    String.format("₹ %,.2f", item.getAmount()),
                                     valueFont));
 
                     amount.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -304,9 +307,9 @@ public class PayrollServiceImpl implements PayrollService {
 
                     salaryTable.addCell(amount);
 
-                }else{
+                } else {
 
-                    PdfPCell empty=new PdfPCell(new Phrase(""));
+                    PdfPCell empty = new PdfPCell(new Phrase(""));
 
                     empty.setBackgroundColor(rowColor);
 
@@ -314,7 +317,7 @@ public class PayrollServiceImpl implements PayrollService {
 
                     salaryTable.addCell(empty);
 
-                    PdfPCell emptyAmount=new PdfPCell(new Phrase(""));
+                    PdfPCell emptyAmount = new PdfPCell(new Phrase(""));
 
                     emptyAmount.setBackgroundColor(rowColor);
 
@@ -323,7 +326,7 @@ public class PayrollServiceImpl implements PayrollService {
                     salaryTable.addCell(emptyAmount);
 
                 }
-                PdfPCell grossLabel=new PdfPCell(new Phrase("Gross Salary",labelFont));
+                PdfPCell grossLabel = new PdfPCell(new Phrase("Gross Salary", labelFont));
 
                 grossLabel.setBackgroundColor(HEADER_BG);
 
@@ -331,8 +334,8 @@ public class PayrollServiceImpl implements PayrollService {
 
                 salaryTable.addCell(grossLabel);
 
-                PdfPCell grossValue=new PdfPCell(new Phrase(
-                        String.format("₹ %,.2f",payroll.getGrossSalary()),
+                PdfPCell grossValue = new PdfPCell(new Phrase(
+                        String.format("₹ %,.2f", payroll.getGrossSalary()),
                         labelFont));
 
                 grossValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -343,7 +346,7 @@ public class PayrollServiceImpl implements PayrollService {
 
                 salaryTable.addCell(grossValue);
 
-                PdfPCell deductionLabel=new PdfPCell(new Phrase("Total Deduction",labelFont));
+                PdfPCell deductionLabel = new PdfPCell(new Phrase("Total Deduction", labelFont));
 
                 deductionLabel.setBackgroundColor(HEADER_BG);
 
@@ -351,8 +354,8 @@ public class PayrollServiceImpl implements PayrollService {
 
                 salaryTable.addCell(deductionLabel);
 
-                PdfPCell deductionValue=new PdfPCell(new Phrase(
-                        String.format("₹ %,.2f",payroll.getTotalDeductions()),
+                PdfPCell deductionValue = new PdfPCell(new Phrase(
+                        String.format("₹ %,.2f", payroll.getTotalDeductions()),
                         labelFont));
 
                 deductionValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -370,7 +373,7 @@ public class PayrollServiceImpl implements PayrollService {
                 PdfPTable summaryTable = new PdfPTable(2);
                 summaryTable.setWidthPercentage(100);
                 summaryTable.setSpacingBefore(15);
-                summaryTable.setWidths(new float[]{3,2});
+                summaryTable.setWidths(new float[]{3, 2});
 
                 PdfPCell allowanceLabel = new PdfPCell(new Phrase("Total Allowances", labelFont));
                 allowanceLabel.setBackgroundColor(HEADER_BG);
@@ -444,7 +447,7 @@ public class PayrollServiceImpl implements PayrollService {
 
                 statusTable.setWidthPercentage(100);
 
-                statusTable.setWidths(new float[]{1,1});
+                statusTable.setWidths(new float[]{1, 1});
 
                 PdfPCell statusLabel = new PdfPCell(new Phrase("Payment Status", labelFont));
                 statusLabel.setBorder(Rectangle.NO_BORDER);
@@ -509,7 +512,7 @@ public class PayrollServiceImpl implements PayrollService {
                 return outputStream.toByteArray();
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to generate salary slip",e);
+            throw new RuntimeException("Failed to generate salary slip", e);
         }
         return new byte[0];
     }
@@ -614,9 +617,9 @@ public class PayrollServiceImpl implements PayrollService {
             sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 3));
 
             String monthName = Month.of(month).getDisplayName(TextStyle.FULL, Locale.ENGLISH);
-            String salaryMonth = "Month : "+monthName+" "+year;
+            String salaryMonth = "Month : " + monthName + " " + year;
 
-            String generatedOn = "Generated on : "+LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            String generatedOn = "Generated on : " + LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 
             Row infoRow = sheet.createRow(2);
 
@@ -710,83 +713,39 @@ public class PayrollServiceImpl implements PayrollService {
 
     private void calculatePayroll(PayrollRequest request, Employee employee) {
         EmployeeCompensation compensation = compensationRepository.findByEmployeeId(employee.getId()).orElseThrow(() -> new RuntimeException("Compensation not found"));
+        AttendanceSummary summary = getattendanceSummary(employee, request);
 
-        /*
-         * attendance implementation remaining
-         */
+        if (summary.getTotalWorkingDays() <= 0) {
+            throw new RuntimeException("No working days found for selected payroll");
+        }
 
-        int totalWworkingDays = 30;
-        int payableDays = 30;
-
-        double ratio = (double) payableDays / totalWworkingDays;
+        double ratio = summary.getPayableDays() / summary.getTotalWorkingDays();
         double basicSalary = compensation.getBasicSalary() * ratio;
-
-        double totalAllowances = 0.0;
-        double totalDeductions = 0.0;
 
         Payroll payroll = Payroll.builder()
                 .employee(employee)
                 .payrollMonth(request.getPayrollMonth())
                 .payrollYear(request.getPayrollYear())
-                .totalWorkingDays(totalWworkingDays)
-                .payableDays(payableDays)
-                .presentDays(payableDays)
-                .absentDays(0)
-                .leaveDays(0)
+                .payrollYear(request.getPayrollYear())
+                .payrollMonth(request.getPayrollMonth())
+                .generatedDate(LocalDate.now())
+                .status(PayrollStatus.DRAFT)
+                .totalWorkingDays(summary.getTotalWorkingDays())
+                .payableDays(summary.getPayableDays())
+                .presentDays(summary.getPresentDays())
+                .absentDays(summary.getAbsentDays())
+                .halfDays(summary.getHalfDays())
+                .paidLeaveDays(summary.getPaidLeaveDays())
+                .unpaidLeaveDays(summary.getUnpaidLeaveDays())
+                .holidayDays(summary.getHolidayDays())
+                .weekendDays(summary.getHolidayDays())
                 .basicSalary(basicSalary)
-                .processdDate(LocalDate.now())
-                .status(PayrollStatus.PROCESSED)
                 .build();
 
-        /*
-            Allowances
-         */
-
-        List<EmployeeAllowance> allowances = allowanceRepository.findByEmployeeId(employee.getId());
-        List<EmployeeDeduction> deductions = deductionRepository.findByEmployeeId(employee.getId());
-
-        for (EmployeeAllowance allowance : allowances) {
-            double amount;
-            if (allowance.getCalculationType() == CalculationType.PRO_RATED) {
-                amount = allowance.getAmount() * ratio;
-            } else {
-                amount = allowance.getAmount();
-            }
-
-            totalAllowances += amount;
-
-            PayrollItem item = PayrollItem.builder()
-                    .itemName(allowance.getAllowanceName())
-                    .amount(amount)
-                    .itemType(PayrollItemType.ALLOWANCE)
-                    .payroll(payroll)
-                    .build();
-            payroll.getPayrollItems().add(item);
-        }
-
-       /*
-            Deductions
-        */
-
-        for (EmployeeDeduction deduction : deductions) {
-            double amount;
-            if (deduction.getCalculationType() == CalculationType.PRO_RATED) {
-                amount = deduction.getAmount() * ratio;
-            } else {
-                amount = deduction.getAmount();
-            }
-            totalDeductions += amount;
-            PayrollItem item = PayrollItem.builder()
-                    .itemName(deduction.getDeductionName())
-                    .amount(amount)
-                    .itemType(PayrollItemType.DEDUCTION)
-                    .payroll(payroll)
-                    .build();
-            payroll.getPayrollItems().add(item);
-        }
+        double totalAllowances = calculateAllowances(payroll, employee, ratio);
+        double totalDeductions = calculateDeductions(payroll, employee, ratio);
 
         double grossSalary = basicSalary + totalAllowances;
-
         double netSalary = grossSalary - totalDeductions;
 
         payroll.setTotalAllowances(totalAllowances);
@@ -794,6 +753,7 @@ public class PayrollServiceImpl implements PayrollService {
         payroll.setGrossSalary(grossSalary);
         payroll.setNetSalary(netSalary);
         payrollRepository.save(payroll);
+        payroll.setPayrollNumber(String.format("PAY-%d-%02d-%05d",payroll.getPayrollYear(), payroll.getPayrollMonth(), payroll.getId()));
     }
 
     @Override
@@ -822,10 +782,16 @@ public class PayrollServiceImpl implements PayrollService {
     }
 
     @Override
-    public List<PayrollResponse> getEmployeePayrolls(Long employeeId) {
-        return payrollRepository.findByEmployeeId(employeeId).stream()
-                .map(this::mapToResponse)
-                .toList();
+    public PayrollPageResponse getEmployeePayrolls(PayrollFilterRequest request) {
+        Pageable pageable = PageRequest.of(request.getPage(), request.getPageSize(), Sort.by("employee.firstName"));
+        Page<Payroll> payrolls = payrollRepository.findByEmployeeId(request.getEmployeeId(), pageable);
+        return PayrollPageResponse.builder()
+                .payrolls(payrolls.stream().map(this::mapToResponse).toList())
+                .page(payrolls.getTotalPages())
+                .size(payrolls.getSize())
+                .totalPages(payrolls.getTotalPages())
+                .totalElements(payrolls.getTotalElements())
+                .build();
     }
 
     @Override
@@ -837,6 +803,104 @@ public class PayrollServiceImpl implements PayrollService {
         return mapToResponse(savedPayroll);
     }
 
+    private AttendanceSummary getattendanceSummary(Employee employee, PayrollRequest request) {
+        YearMonth yearMonth = YearMonth.of(request.getPayrollYear(), request.getPayrollMonth());
+        LocalDate startDate = yearMonth.atDay(1);
+        LocalDate endDate = yearMonth.atEndOfMonth();
+
+        List<Attendance> attendances = attendanceRepository.findByEmployeeIdAndDateBetween(employee.getId(), startDate, endDate);
+
+        int presentDays = 0;
+        int absentDays = 0;
+        int halfDays = 0;
+        int holiday = 0;
+        int weekend = 0;
+        int paidLeave = 0;
+        int unpaidLeave = 0;
+
+        for (Attendance attendance : attendances) {
+            switch (attendance.getStatus()) {
+                case PRESENT -> presentDays++;
+                case ABSENT -> absentDays++;
+                case HALF_DAY -> halfDays++;
+                case HOLIDAY -> holiday++;
+                case WEEKEND -> weekend++;
+
+                case ON_LEAVE -> {
+                    if (attendance.getLeave().getLeaveType() == LeaveType.UNPAID) {
+                        unpaidLeave++;
+                    } else {
+                        paidLeave++;
+                    }
+                }
+            }
+        }
+
+        int totalWorkingDays = yearMonth.lengthOfMonth() - holiday - weekend;
+        double payableDays = presentDays + paidLeave + holiday + weekend + (halfDays * 0.5);
+
+        return AttendanceSummary.builder()
+                .totalWorkingDays(totalWorkingDays)
+                .payableDays(payableDays)
+                .presentDays(presentDays)
+                .absentDays(absentDays)
+                .halfDays(halfDays)
+                .paidLeaveDays(paidLeave)
+                .unpaidLeaveDays(unpaidLeave)
+                .holidayDays(holiday)
+                .weekendDays(weekend)
+                .build();
+    }
+
+    private double calculateAllowances(Payroll payroll, Employee employee, double ratio) {
+        List<EmployeeAllowance> allowances = allowanceRepository.findByEmployeeId(employee.getId());
+
+        double total = 0.0;
+
+        for (EmployeeAllowance allowance : allowances) {
+            double amount;
+
+            if (allowance.getCalculationType() == CalculationType.PRO_RATED) {
+                amount = allowance.getAmount() * ratio;
+            } else {
+                amount = allowance.getAmount();
+            }
+            total += amount;
+
+            PayrollItem item = PayrollItem.builder()
+                    .payroll(payroll)
+                    .itemName(allowance.getAllowanceName())
+                    .itemType(PayrollItemType.ALLOWANCE)
+                    .amount(amount)
+                    .build();
+            payroll.getPayrollItems().add(item);
+        }
+        return total;
+    }
+
+    private double calculateDeductions(Payroll payroll, Employee employee, double ratio) {
+        List<EmployeeDeduction> deductions = deductionRepository.findByEmployeeId(employee.getId());
+
+        double total = 0.0;
+        for (EmployeeDeduction deduction : deductions) {
+            double amount;
+
+            if (deduction.getCalculationType() == CalculationType.PRO_RATED) {
+                amount = deduction.getAmount() * ratio;
+            } else {
+                amount = deduction.getAmount();
+            }
+            total += amount;
+            PayrollItem item = PayrollItem.builder()
+                    .payroll(payroll)
+                    .itemName(deduction.getDeductionName())
+                    .itemType(PayrollItemType.DEDUCTION)
+                    .amount(amount)
+                    .build();
+            payroll.getPayrollItems().add(item);
+        }
+        return total;
+    }
 
     private PayrollResponse mapToResponse(Payroll payroll) {
 

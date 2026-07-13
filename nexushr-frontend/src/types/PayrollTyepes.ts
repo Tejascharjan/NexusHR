@@ -43,6 +43,7 @@ export interface PayrollFilterRequest {
      payrollYear?: number;
      departmentId?: number;
      status?: string;
+     employeeId?: number;
      page: number;
      size: number;
 }

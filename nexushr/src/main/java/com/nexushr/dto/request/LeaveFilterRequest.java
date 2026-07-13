@@ -13,4 +13,9 @@ public class LeaveFilterRequest {
     private LeaveStatus status;
     private Integer page=0;
     private Integer pageSize=10;
+
+    // for approve or reject leave
+    private Long approverId;
+    private Long leaveId;
+    private String remark;
 }

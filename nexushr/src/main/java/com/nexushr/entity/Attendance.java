@@ -22,7 +22,7 @@ public class Attendance {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id",nullable = false)
+    @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
 
     @Column(nullable = false)
@@ -34,7 +34,11 @@ public class Attendance {
     @Enumerated(EnumType.STRING)
     private Attendancestatus status;
 
-    private Boolean biometricVerified;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "leave_id")
+    private Leave leave;
+
+    private Boolean isManuallyEdited = false;
 
     private Double workedHours;
 

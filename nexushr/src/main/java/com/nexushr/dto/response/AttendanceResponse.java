@@ -18,6 +18,5 @@ public class AttendanceResponse {
     private LocalTime checkIn;
     private LocalTime checkOut;
     private Attendancestatus status;
-    private Boolean biometricVerified;
     private Double workedHours;
 }

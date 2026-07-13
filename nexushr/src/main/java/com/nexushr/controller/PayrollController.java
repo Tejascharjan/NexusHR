@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/payrolls")
@@ -65,8 +66,8 @@ public class PayrollController {
                 .body(excel);
     }
 
-    @GetMapping("/employee/{employeeId}")
-    public ResponseEntity<List<PayrollResponse>> getEmployeePayrolls(@PathVariable Long employeeId) {
-        return ResponseEntity.ok(payrollService.getEmployeePayrolls(employeeId));
+    @PostMapping("/employee")
+    public ResponseEntity<PayrollPageResponse> getEmployeePayrolls(@RequestBody PayrollFilterRequest request) {
+        return ResponseEntity.ok(payrollService.getEmployeePayrolls(request));
     }
 }

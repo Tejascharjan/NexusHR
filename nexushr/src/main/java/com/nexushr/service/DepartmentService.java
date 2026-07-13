@@ -12,8 +12,6 @@ public interface DepartmentService {
 
     DepartmentResponse getDepartmentById(long id);
 
-    DepartmentResponse getDepartmentByName(String name);
-
     List<DepartmentResponse> getAllDepartments();
 
     DepartmentResponse updateDepartment(Long id, DepartmentRequest department);
@@ -21,4 +19,6 @@ public interface DepartmentService {
     void deleteDepartment(Long id);
 
     boolean existsByName(String name);
+
+    List<DepartmentResponse> getDepartmentsByManagerId(Long managerId);
 }

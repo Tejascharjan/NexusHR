@@ -15,6 +15,8 @@ public interface LeaveService {
 
     Page<LeaveResponse> filterLeaves(LeaveFilterRequest request);
 
+    Page<LeaveResponse> getLeavesByEmployee(LeaveFilterRequest request);
+
     LeaveResponse approveLeave(Long leaveId, Long approverId, String remark);
 
     LeaveResponse rejectLeave(Long leaveId, Long approverId, String remark);

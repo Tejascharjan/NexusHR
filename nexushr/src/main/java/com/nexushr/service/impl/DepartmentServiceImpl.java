@@ -49,13 +49,6 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public DepartmentResponse getDepartmentByName(String name) {
-        Department department = departmentRepository.findByName(name)
-                .orElseThrow(() -> new RuntimeException("Department not found: " + name));
-        return mapToDepartmentResponse(department);
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public List<DepartmentResponse> getAllDepartments() {
         return departmentRepository.findByIsActiveTrue().stream()
@@ -80,7 +73,6 @@ public class DepartmentServiceImpl implements DepartmentService {
         return mapToDepartmentResponse(updatedDepartment);
     }
 
-
     @Override
     public void deleteDepartment(Long id) {
         Department existing = departmentRepository.findById(id)
@@ -92,6 +84,13 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public boolean existsByName(String name) {
         return departmentRepository.existsByName(name);
+    }
+
+    @Override
+    public List<DepartmentResponse> getDepartmentsByManagerId(Long managerId) {
+        return departmentRepository.findByManager_Id(managerId).stream()
+                .map(this::mapToDepartmentResponse)
+                .toList();
     }
 
     private DepartmentResponse mapToDepartmentResponse(Department department) {

@@ -6,7 +6,7 @@ export const getAllDepartments = createAsyncThunk(
   "department/getAllDepartments",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get("/admin/departments");
+      const response = await api.get("/api/departments");
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -20,7 +20,7 @@ export const createDepartment = createAsyncThunk(
   "department/createDepartment",
   async (deptData: any, { rejectWithValue }) => {
     try {
-      const response = await api.post("/admin/departments", deptData);
+      const response = await api.post("/api/departments", deptData);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -36,7 +36,7 @@ export const updateDepartment = createAsyncThunk(
     { id, departmentData }: { id: number, departmentData: any }, { rejectWithValue }
   ) => {
     try {
-      const response = await api.put(`/admin/departments/${id}`, departmentData);
+      const response = await api.put(`/api/departments/${id}`, departmentData);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -49,7 +49,7 @@ export const deleteDepartment = createAsyncThunk(
   "department/deleteDepartment",
   async (id: number, { dispatch, rejectWithValue }) => {
     try {
-      const response = await api.delete(`/admin/departments/${id}`);
+      const response = await api.delete(`/api/departments/${id}`);
       dispatch(getAllDepartments());
       return response.data;
     } catch (error: any) {
@@ -60,6 +60,19 @@ export const deleteDepartment = createAsyncThunk(
   }
 );
 
+export const getDepartmentsByManagerId = createAsyncThunk(
+  "department/getDepartmentsByManagerId",
+  async (managerId: number, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/api/departments/manager/${managerId}`);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to get departments by manager id",
+      )
+    }
+  }
+);
 
 interface DepartmentState {
   department: Department | null;
@@ -90,6 +103,18 @@ export const departmentSlice = createSlice({
         state.departments = action.payload;
       })
       .addCase(getAllDepartments.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(getDepartmentsByManagerId.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getDepartmentsByManagerId.fulfilled, (state, action) => {
+        state.loading = false;
+        state.departments = action.payload;
+      })
+      .addCase(getDepartmentsByManagerId.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })

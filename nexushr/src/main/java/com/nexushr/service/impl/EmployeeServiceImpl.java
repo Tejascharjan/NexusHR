@@ -30,7 +30,17 @@ public class EmployeeServiceImpl implements EmployeeService {
         Department department = departmentRepository.findById(employeeRequest.getDepartmentId())
                 .orElseThrow(() -> new RuntimeException("Department not found"));
 
+        String empCode = employeeRequest.getEmployeeCode();
+        if (empCode == null || empCode.trim().isEmpty()) {
+            empCode = generateUniqueEmployeeCode();
+        }else{
+            if(employeeRepository.existsByEmployeeCode(empCode)){
+                throw new RuntimeException("Employee code already exists");
+            }
+        }
+
         Employee employee = Employee.builder()
+                .employeeCode(empCode)
                 .firstName(employeeRequest.getFirstName())
                 .lastName(employeeRequest.getLastName())
                 .email(employeeRequest.getEmail())
@@ -58,6 +68,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         saveDeductions(savedEmployee, request);
 
         return mapToResponse(savedEmployee);
+    }
+
+    private String generateUniqueEmployeeCode() {
+        long count = employeeRepository.count();
+        String newCode = "EMP-"+String.format("%04d", (count+1));
+        while (employeeRepository.existsByEmployeeCode(newCode)) {
+            count++;
+            newCode = "EMP-"+String.format("%04d", (count+1));
+        }
+        return newCode;
     }
 
     private void saveCompensation(Employee employee, EmployeeProfileRequest request) {

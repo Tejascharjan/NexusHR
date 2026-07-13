@@ -2,6 +2,7 @@ import { signin } from "@/state/authSlice";
 import { useAppDispatch } from "@/state/store";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function SignInForm() {
   const dispatch = useAppDispatch();
@@ -10,10 +11,15 @@ export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) return;
-    dispatch(signin({ loginRequest: { email, password }, navigate }));
+    try {
+      await dispatch(signin({ loginRequest: { email, password }, navigate })).unwrap();
+      toast.success("Successfully Logged In!");
+    } catch (error: any) {
+      toast.error(error?.message);
+    }
   };
 
   return (

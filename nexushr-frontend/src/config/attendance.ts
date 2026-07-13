@@ -37,10 +37,6 @@ export const ATTENDANCE_STATUS = [
     value: "HALF_DAY",
   },
   {
-    title: "ON_LEAVE",
-    value: "ON_LEAVE",
-  },
-  {
     title: "HOLIDAY",
     value: "HOLIDAY",
   },

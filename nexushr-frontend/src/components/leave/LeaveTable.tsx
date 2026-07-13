@@ -1,9 +1,13 @@
-import { Check, Eye, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import LeaveStatusBadge from "./LeaveStatusBadge";
-import { useAppSelector } from "@/state/store";
+import type { Leave } from "@/types/LeaveTypes";
+import { useState } from "react";
+import LeaveApprovalDialog from "./LeaveApprovalDialog";
 
-const LeaveTable = ({ isAdmin }: { isAdmin: boolean }) => {
-  const { leaves } = useAppSelector((store) => store.leave);
+const LeaveTable = ({ isAdmin, leaves }: { isAdmin: boolean; leaves: Leave[] }) => {
+  const [selectedLeaveId, setSelectedLeaveId] = useState<Number | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [action, setAction] = useState<"APPROVE" | "REJECT">("APPROVE");
 
   return (
     <div className="bg-card-bg border border-slate-800 rounded-2xl overflow-hidden">
@@ -23,8 +27,7 @@ const LeaveTable = ({ isAdmin }: { isAdmin: boolean }) => {
 
               <th className="px-6 py-4 text-left text-sm font-semibold text-slate-400">Applied On</th>
               <th className="px-6 py-4 text-center text-sm font-semibold text-slate-400">Status</th>
-
-              <th className="px-6 py-4 text-right text-sm font-semibold text-slate-400">Actions</th>
+              {isAdmin && <th className="px-6 py-4 text-right text-sm font-semibold text-slate-400">Actions</th>}
             </tr>
           </thead>
 
@@ -52,11 +55,11 @@ const LeaveTable = ({ isAdmin }: { isAdmin: boolean }) => {
                 <td className="px-6 py-4 text-white">{leave.leaveType}</td>
 
                 <td className="px-6 py-4 text-slate-300">
-                  {leave.startDate}
+                  {leave.fromDate}
                   <br />
                   <span className="text-slate-500">to</span>
                   <br />
-                  {leave.endDate}
+                  {leave.toDate}
                 </td>
 
                 <td className="px-6 py-4 text-white">{leave.totalDays}</td>
@@ -65,39 +68,62 @@ const LeaveTable = ({ isAdmin }: { isAdmin: boolean }) => {
                   <p className="truncate text-slate-300">{leave.reason}</p>
                 </td>
 
-                <td className="px-6 py-4 text-slate-300">{leave.appliedDate}</td>
+                <td className="px-6 py-4 text-slate-300">
+                  {new Date(leave.requestedAt).toLocaleDateString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </td>
 
                 <td className="px-6 py-4 text-center">
                   <LeaveStatusBadge status={leave.status} />
                 </td>
 
-                <td className="px-6 py-4">
-                  <div className="flex justify-end gap-2">
-                    <button className="p-2 rounded-lg bg-slate-700 hover:bg-slate-600 transition">
-                      <Eye size={18} />
-                    </button>
-
-                    {isAdmin && leave.status === "PENDING" && (
+                {isAdmin && leave.status === "PENDING" && (
+                  <td className="px-6 py-4">
+                    <div className="flex justify-end gap-2">
                       <>
                         <button
-                          //  onClick={() => dispatch(approveLeave(leave.id))}
+                          onClick={() => {
+                            setSelectedLeaveId(leave.id);
+                            setAction("APPROVE");
+                            setDialogOpen(true);
+                          }}
                           className="p-2 rounded-lg bg-green-600 hover:bg-green-700 text-white transition">
                           <Check size={18} />
                         </button>
 
                         <button
-                          //  onClick={() => dispatch(rejectLeave(leave.id))}
+                          onClick={() => {
+                            setSelectedLeaveId(leave.id);
+                            setAction("REJECT");
+                            setDialogOpen(true);
+                          }}
                           className="p-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition">
                           <X size={18} />
                         </button>
                       </>
-                    )}
-                  </div>
-                </td>
+                    </div>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
         </table>
+        {selectedLeaveId && (
+          <LeaveApprovalDialog
+            open={dialogOpen}
+            onClose={() => {
+              setDialogOpen(false);
+              setSelectedLeaveId(null);
+            }}
+            action={action}
+            leaveId={selectedLeaveId}
+          />
+        )}
       </div>
     </div>
   );

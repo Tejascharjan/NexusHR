@@ -64,7 +64,21 @@ export const filterPayroll = createAsyncThunk(
       )
     }
   }
-)
+);
+
+export const getEmployeePayrolls = createAsyncThunk(
+  "payroll/getEmployeePayrolls",
+  async (filter: PayrollFilterRequest, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/api/payrolls/employee", filter);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to filter payrolls"
+      )
+    }
+  }
+);
 
 export const downloadSalarySlip = createAsyncThunk(
   "payroll/downloadSalarySlip",
@@ -79,9 +93,8 @@ export const downloadRtgs = createAsyncThunk(
   async ({ month, year }: { month: number, year: number }) => {
     const response = await api.get(`/api/payrolls/export-rtgs`, { params: { month, year }, responseType: "blob" });
     return response.data as Blob;
-  })
-
-
+  }
+);
 
 export const approvePayroll = createAsyncThunk(
   "payroll/approvePayroll",
@@ -193,6 +206,30 @@ export const payrollSlice = createSlice({
         state.totalElements = action.payload.totalElements;
       })
       .addCase(filterPayroll.rejected, (state, action) => {
+        state.loading = false;
+
+        state.error = action.payload as string;
+      })
+      .addCase(getEmployeePayrolls.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getEmployeePayrolls.fulfilled, (state, action) => {
+        state.loading = false;
+
+        state.payrolls = action.payload.payrolls;
+
+        state.stats = action.payload.statistics;
+
+        state.page = action.payload.page;
+
+        state.size = action.payload.size;
+
+        state.totalPages = action.payload.totalPages;
+
+        state.totalElements = action.payload.totalElements;
+      })
+      .addCase(getEmployeePayrolls.rejected, (state, action) => {
         state.loading = false;
 
         state.error = action.payload as string;

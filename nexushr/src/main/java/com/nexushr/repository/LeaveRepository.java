@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface LeaveRepository extends JpaRepository<Leave, Long> {
@@ -30,10 +31,17 @@ public interface LeaveRepository extends JpaRepository<Leave, Long> {
                              Pageable pageable);
 
     @Query("""
-        SELECT COUNT(l) FROM Leave l
-        WHERE l.status = 'PENDING' 
-    """)
+                SELECT COUNT(l) FROM Leave l
+                WHERE l.status = 'PENDING' 
+            """)
     Long getPendingLeaves();
 
     Page<Leave> findByStatusOrderByRequestedAtDesc(LeaveStatus status, Pageable pageable);
+
+    List<Leave> findByEmployeeIdAndStatusAndFromDateLessThanEqualAndToDateGreaterThanEqual(
+            Long employeeId,
+            LeaveStatus status,
+            LocalDate fromDate,
+            LocalDate toDate
+    );
 }

@@ -6,7 +6,7 @@ export const createEmployee = createAsyncThunk(
   "employee/createEmployee",
   async (employeeData: any, { rejectWithValue }) => {
     try {
-      const response = await api.post("/admin/employees", employeeData);
+      const response = await api.post("/api/employees", employeeData);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -20,7 +20,7 @@ export const getAllEmployees = createAsyncThunk(
   "/employee/getAllEmployees",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get("/admin/employees");
+      const response = await api.get("/api/employees");
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -35,7 +35,6 @@ export const getEmployeeDetails = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.get(`/auth/employee/profile`);
-      console.log("response", response);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -45,7 +44,16 @@ export const getEmployeeDetails = createAsyncThunk(
   },
 );
 
-
+export const getEmployeeById = createAsyncThunk("employee/getEmployeeById", async (_, { rejectWithValue }) => {
+  try {
+    const response = await api.get(`/api/employees/id`);
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.message || "Failed to fetch employee details",
+    );
+  }
+});
 
 interface EmployeeState {
   employees: Employee[];
@@ -91,6 +99,18 @@ const employeeSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
+      .addCase(getEmployeeById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getEmployeeById.fulfilled, (state, action) => {
+        state.employees = [action.payload];
+        state.loading = false;
+      })
+      .addCase(getEmployeeById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 

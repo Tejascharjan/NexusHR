@@ -9,7 +9,7 @@ export const attendanceSchema = z.object({
   date: z.string().min(1, "Attendance data is required"),
   checkIn: z.string().optional().or(z.literal("")),
   checkOut: z.string().optional().or(z.literal("")),
-  status: z.enum(["PRESENT", "ABSENT", "LATE", "HALF_DAY"], {
+  status: z.enum(["PRESENT", "ABSENT", "LATE", "HALF_DAY", "HOLIDAY", "WEEKEND"], {
     message: "Please select attendace status",
   }),
   biometricVerified: z.enum(["true", "false"], {
